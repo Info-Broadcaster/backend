@@ -3,6 +3,7 @@ export default function InputLabel({
   placeholder = "",
   value,
   setValue,
+  disabled = false,
 }) {
   return (
     <div className="flex items-center justify-center w-full gap-5">
@@ -15,6 +16,7 @@ export default function InputLabel({
         placeholder={placeholder}
         value={value}
         onChange={(event) => setValue(event.target.value)}
+        disabled={disabled}
       />
     </div>
   );

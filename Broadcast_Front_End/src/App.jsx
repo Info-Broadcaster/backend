@@ -4,33 +4,17 @@ import { useNavigate } from "react-router-dom";
 import PageLayer from "./PageLayer";
 import { useState } from "react";
 import Button from "./components/Button";
-import axios from "axios";
 
+// sendUrl("http://localhost:443/api/dialoguewithllama/url", { url: link });
 function App() {
   const [link, setLink] = useState("");
   const navigate = useNavigate();
   function generateArticle() {
-    navigate("/edition");
-    sendUrl("http://localhost:5000/url", { url: link });
+    navigate("/edition/" + link);
   }
 
   function onLinkChange(event) {
     setLink(event.target.value);
-  }
-
-  function sendUrl(url, body) {
-    axios
-      .post(url, body)
-      .then((response) => {
-        console.log(response);
-        if (response.data.status === "error") {
-          console.error(response.data.message);
-          return;
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   }
 
   return (
