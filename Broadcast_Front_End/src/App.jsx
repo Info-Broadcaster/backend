@@ -2,11 +2,35 @@
 import "./App.css";
 import { useNavigate } from "react-router-dom";
 import PageLayer from "./PageLayer";
+import { useState } from "react";
+import Button from "./components/Button";
+import axios from "axios";
 
 function App() {
+  const [link, setLink] = useState("");
   const navigate = useNavigate();
   function generateArticle() {
     navigate("/edition");
+    sendUrl("http://localhost:5000/url", { url: link });
+  }
+
+  function onLinkChange(event) {
+    setLink(event.target.value);
+  }
+
+  function sendUrl(url, body) {
+    axios
+      .post(url, body)
+      .then((response) => {
+        console.log(response);
+        if (response.data.status === "error") {
+          console.error(response.data.message);
+          return;
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   return (
@@ -21,13 +45,10 @@ function App() {
           type="text"
           placeholder="Votre lien ..."
           className="border w-5/12 h-14 text-center"
+          value={link}
+          onChange={onLinkChange}
         />
-        <button
-          className="bg-purple-400 w-60 h-14 rounded-md"
-          onClick={() => generateArticle()}
-        >
-          Générer
-        </button>
+        <Button callback={() => generateArticle()}>Générer</Button>
       </div>
     </PageLayer>
   );
