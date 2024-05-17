@@ -1,5 +1,3 @@
-export default function Header({nombre}) {
-  return (
-    <div>Header nombre: {nombre}</div>
-  )
+export default function Header({ nombre }) {
+  return <div className="">Header nombre: {nombre}</div>;
 }
