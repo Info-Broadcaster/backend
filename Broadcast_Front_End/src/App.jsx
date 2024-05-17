@@ -1,10 +1,14 @@
 import './App.css'
+import Header from './Header'
 
 function App() {
 
   return (
     <>
-      <header className='bg-red-900'>InfoBroadcaster</header>
+      <Header />
+      <div>
+        salut
+      </div>
     </>
   )
 }
