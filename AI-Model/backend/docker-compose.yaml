@@ -1,0 +1,13 @@
+services:
+  ollama:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    container_name: ollama
+
+volumes:
+  ollama:
