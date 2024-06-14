@@ -21,7 +21,7 @@ router.post("/summarize", async (req, res) => {
 
     const isValideUrl = isValidUrl(req.body.url);
     if (!isValideUrl) {
-        return res.status(400).send("Invalid URL or URL is not reachable");
+        return res.status(400).json("Invalid URL or URL is not reachable");
     }
 
     const sumamarize = require("../logique/summarize");
