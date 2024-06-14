@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {execSync} = require('child_process');
-
+const os = require('os');
 
 /*
 Description:
@@ -35,8 +35,14 @@ router.post("/summarize", async (req, res) => {
 })
 
 function isValidUrl(url) {
+    let stdout;
+
     try {
-        const stdout = execSync(`curl -o NUL -s -w "%{http_code}" "${url}"`, { encoding: 'utf-8' });
+        if (os.platform() === "win32")
+            stdout = execSync(`curl -o NUL -s -w "%{http_code}" "${url}"`, {encoding: 'utf-8'});
+        else
+            stdout = execSync(`curl -o /dev/null -s -w "%{http_code}" "${url}"`, {encoding: 'utf-8'});
+
         const statusCode = parseInt(stdout, 10);
         return statusCode >= 200 && statusCode < 400;
     } catch (error) {
