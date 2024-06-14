@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const {execSync} = require('child_process');
 
 
 /*
@@ -18,6 +19,11 @@ router.post("/summarize", async (req, res) => {
         return res.status(400).send("URL is required");
     }
 
+    const isValideUrl = isValidUrl(req.body.url);
+    if (!isValideUrl) {
+        return res.status(400).send("Invalid URL or URL is not reachable");
+    }
+
     const sumamarize = require("../logique/summarize");
     const summarized = await sumamarize(req.body.url);
 
@@ -27,5 +33,15 @@ router.post("/summarize", async (req, res) => {
         return res.status(500).send("Error");
     }
 })
+
+function isValidUrl(url) {
+    try {
+        const stdout = execSync(`curl -o NUL -s -w "%{http_code}" "${url}"`, { encoding: 'utf-8' });
+        const statusCode = parseInt(stdout, 10);
+        return statusCode >= 200 && statusCode < 400;
+    } catch (error) {
+        return false;
+    }
+}
 
 module.exports = router;
