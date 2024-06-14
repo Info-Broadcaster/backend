@@ -1,4 +1,5 @@
 const axios = require('axios');
+const {post} = require("axios");
 
 /*
 Description:
@@ -11,12 +12,23 @@ Retour:
 Une promesse contenant le résumé de l'article
  */
 
-async function summarize(url) {
+async function summarize(url, lang) {
     const postData = {
         model: "llama3",
-        prompt: `Summarize me this article : ${url}`,
+        prompt: "Summarize me this article ",
         stream: false
     };
+
+    switch (lang) {
+        case "fr" :
+            postData.prompt += "en français";
+            break
+        case "en":
+            postData.prompt += "en anglais";
+            break;
+    }
+
+    postData.prompt += url;
 
     const result = await axios.post('http://localhost:11434/api/generate', postData);
     return result.data.response;

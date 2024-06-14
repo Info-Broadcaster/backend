@@ -19,13 +19,19 @@ router.post("/summarize", async (req, res) => {
         return res.status(400).send("URL is required");
     }
 
+    if(!req.body.lang) {
+        return res.status(400).send("LANG is required");
+    }
+
+    // vérifier lang qu'il soit bien FR, EN, IT ...
+
     const isValideUrl = isValidUrl(req.body.url);
     if (!isValideUrl) {
         return res.status(400).json("Invalid URL or URL is not reachable");
     }
 
     const sumamarize = require("../logique/summarize");
-    const summarized = await sumamarize(req.body.url);
+    const summarized = await sumamarize(req.body.url, req.body.lang);
 
     if (summarized) {
         return res.status(200).json({"data": summarized});
