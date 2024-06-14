@@ -16,9 +16,12 @@ export default function Edition() {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .post("http://localhost:443/api/dialoguewithllama/url", link)
+      .post("http://localhost:443/api/dialoguewithllama/summarize", {
+        url: decodeURIComponent(link),
+      })
       .then((response) => {
-        console.log(response);
+        console.log(response.data.data);
+        setContent(response.data.data);
         if (response.data.status === "error") {
           console.error(response.data.message);
           return;
@@ -49,6 +52,7 @@ export default function Edition() {
             label="Contenu"
             setValue={(e) => setContent(e.target.value)}
             value={content}
+            textarea={true}
           />
           <InputLabel
             label="Langue"
