@@ -1,0 +1,59 @@
+{
+	"info": {
+		"_postman_id": "f6003dba-a386-449e-90a4-eb5091541039",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23937762",
+		"_collection_link": "https://infobroadcaster.postman.co/workspace/InfoBroadcaster-Workspace~1ab39d4f-3cea-4b1e-86d3-9d054a221c83/collection/23937762-f6003dba-a386-449e-90a4-eb5091541039?action=share&source=collection_link&creator=23937762"
+	},
+	"item": [
+		{
+			"name": "hello",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:443/api/hello",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"api",
+						"hello"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:443/api/dialoguewithllama/summarize",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": \"https://www.lemonde.fr/politique/article/2024/05/17/nouvelle-caledonie-l-executif-pris-au-piege-sur-la-question-securitaire_6233749_823448.html\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:443/api/dialoguewithllama/summarize",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"api",
+						"dialoguewithllama",
+						"summarize"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
