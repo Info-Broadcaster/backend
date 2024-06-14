@@ -11,7 +11,7 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/edition/:link",
+    path: "/edition/:link/:lang?",
     element: <Edition />,
   },
 ]);

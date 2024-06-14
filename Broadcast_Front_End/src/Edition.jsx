@@ -6,7 +6,7 @@ import axios from "axios";
 import Spinner from "./components/Spinner";
 
 export default function Edition() {
-  const { link } = useParams();
+  const { link, lang } = useParams();
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
   const [language, setLanguage] = useState("");
@@ -14,10 +14,12 @@ export default function Edition() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log("la langue est ", lang);
     setIsLoading(true);
     axios
       .post("http://localhost:443/api/dialoguewithllama/summarize", {
         url: decodeURIComponent(link),
+        lang: lang,
       })
       .then((response) => {
         console.log(response.data.data);
@@ -33,7 +35,7 @@ export default function Edition() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [link]);
+  }, [link, lang]);
 
   return (
     <PageLayer title="Edition">
