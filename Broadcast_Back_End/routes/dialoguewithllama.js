@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-router.post("/url", async (req, res) => {
+router.post("/summarize", async (req, res) => {
     if (!req.body.url) {
         return res.status(400).send("URL is required");
     }
