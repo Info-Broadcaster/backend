@@ -4,20 +4,29 @@ export default function InputLabel({
   value,
   setValue,
   disabled = false,
+  textarea = false,
 }) {
   return (
     <div className="flex items-center justify-center w-full gap-5">
       <span className="w-1/6">
         <label>{label}</label>
       </span>
-      <input
-        type="text"
-        className="border w-5/6 text-start p-4"
-        placeholder={placeholder}
-        value={value}
-        onChange={(event) => setValue(event.target.value)}
-        disabled={disabled}
-      />
+      {textarea ? (
+        <textarea
+          className="border w-5/6 text-start p-4 h-64"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+        />
+      ) : (
+        <input
+          type="text"
+          className="border w-5/6 text-start p-4"
+          placeholder={placeholder}
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          disabled={disabled}
+        />
+      )}
     </div>
   );
 }

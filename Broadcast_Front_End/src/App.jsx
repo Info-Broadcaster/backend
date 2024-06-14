@@ -10,7 +10,7 @@ function App() {
   const [link, setLink] = useState("");
   const navigate = useNavigate();
   function generateArticle() {
-    navigate("/edition/" + link);
+    navigate("/edition/" + encodeURIComponent(link));
   }
 
   function onLinkChange(event) {
