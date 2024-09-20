@@ -15,8 +15,8 @@ app.use(express.urlencoded({extended: true}));
 const helloRoute = require("./routes/hello");
 app.use("/api/hello", helloRoute);
 
-const dialogueWithLlama = require("./routes/dialogueWithLlama");
-app.use("/api/dialoguewithllama", dialogueWithLlama);
+const dialoguewithllama = require("./routes/dialoguewithllama");
+app.use("/api/dialoguewithllama", dialoguewithllama);
 
 app.listen(PORT, () => {
     console.log(`Server listen on port ${PORT}`);
