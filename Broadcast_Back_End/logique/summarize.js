@@ -16,15 +16,15 @@ const model = "llama3";
 
 async function summarize(url, lang) {
     const postData = {
-        model: `${model}`, prompt: "Résume moi cette article ", stream: false
+        model: `${model}`, prompt: "Summarize this article ", stream: false
     };
 
     switch (lang) {
         case "fr" :
-            postData.prompt += "en français";
+            postData.prompt += "in french";
             break
         case "en":
-            postData.prompt += "en anglais";
+            postData.prompt += "in english";
             break;
     }
 
@@ -33,11 +33,13 @@ async function summarize(url, lang) {
     const result = await axios.post('http://localhost:11434/api/generate', postData);
     const summarized = result.data.response;
 
-    const promptForTitle = `"${summarized}": A partir de ce texte, donne moi un titre ${lang} qui le résume. Il me faut juste le titre, pas besoin de commentaire.`
+    const promptForTitle = `"${summarized}": From this text, give me a title ${lang} that summarizes it. I just need the title, no need for a comment.`
     const title = await interactWithIa(promptForTitle);
 
-    const promptForThemes = `"${summarized}": A partir de ce texte, extrait moi une liste de 3 mots-clés, thèmes ${lang}, qui représente ce texte. Il me faut juste les mots-clés, thèmes, pas besoin de commentaire.`;
-    const themes = await interactWithIa(promptForThemes);
+    // const promptForThemes = `"${summarized}": A partir de ce texte, extrait moi une liste de 3 mots-clés, thèmes ${lang}, qui représente ce texte. Il me faut juste les mots-clés, thèmes, pas besoin de commentaire.`;
+    const promptForThemes = `Analyze the following text: "${summarized}". Identify and list 3 keywords, ${lang}, that summarize the main themes. Present the results as a comma-separated list. Just answer me with your analysis, without further comment or presentation of the data.`
+    let themes = await interactWithIa(promptForThemes);
+    themes = themes.split(", ");
 
     return {
         summarized: result.data.response, title, themes,
