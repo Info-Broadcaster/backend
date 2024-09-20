@@ -6,7 +6,10 @@ gpu:
 	@echo "Installing and configuring NVIDIA GPU support..."
 	@./install.sh
 
-run: build GPU
+pull-model:
+	@docker exec -it ollama ollama pull llama3
+
+run: build gpu pull-model
 	@echo "Starting Docker containers with GPU support..."
 	@docker-compose up -d
 
