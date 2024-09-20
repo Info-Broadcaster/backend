@@ -11,7 +11,7 @@ export default function Edition() {
   const { link, lang } = useParams();
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
-  const [theme, setTheme] = useState(["Cinéma", "Musique", "Sport"]);
+  const [theme, setTheme] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const isDebugMode = false;
 
@@ -26,7 +26,9 @@ export default function Edition() {
         })
         .then((response) => {
           console.log(response.data.data);
-          setContent(response.data.data);
+          setContent(response.data.data.summarized);
+          setSubject(response.data.data.title);
+          setTheme(response.data.data.themes);
           if (response.data.status === "error") {
             console.error(response.data.message);
             return;

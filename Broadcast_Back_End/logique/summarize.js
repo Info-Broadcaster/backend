@@ -12,11 +12,11 @@ Retour:
 Une promesse contenant le résumé de l'article
  */
 
+const model = "llama3";
+
 async function summarize(url, lang) {
     const postData = {
-        model: "llama3",
-        prompt: "Summarize me this article ",
-        stream: false
+        model: `${model}`, prompt: "Résume moi cette article ", stream: false
     };
 
     switch (lang) {
@@ -31,6 +31,28 @@ async function summarize(url, lang) {
     postData.prompt += url;
 
     const result = await axios.post('http://localhost:11434/api/generate', postData);
+    const summarized = result.data.response;
+
+    const promptForTitle = `"${summarized}": A partir de ce texte, donne moi un titre ${lang} qui le résume. Il me faut juste le titre, pas besoin de commentaire.`
+    const title = await interactWithIa(promptForTitle);
+
+    const promptForThemes = `"${summarized}": A partir de ce texte, extrait moi une liste de 3 mots-clés, thèmes ${lang}, qui représente ce texte. Il me faut juste les mots-clés, thèmes, pas besoin de commentaire.`;
+    const themes = await interactWithIa(promptForThemes);
+
+    return {
+        summarized: result.data.response, title, themes,
+    };
+}
+
+async function interactWithIa(prompt) {
+    const postData = {
+        model: `${model}`,
+        prompt: `${prompt}`,
+        stream: false
+    };
+
+    const result = await axios.post('http://localhost:11434/api/generate', postData);
+
     return result.data.response;
 }
 
