@@ -38,7 +38,7 @@ router.post("/summarize", async (req, res) => {
             "data": {
                 "summarized": dataAfterIA.summarized,
                 "title": dataAfterIA.title,
-                "themes": dataAfterIA.themes,
+                "themes": [dataAfterIA.themes],
             }
         });
     } else {
