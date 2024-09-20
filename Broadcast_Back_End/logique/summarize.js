@@ -31,6 +31,24 @@ async function summarize(url, lang) {
     postData.prompt += url;
 
     const result = await axios.post('http://localhost:11434/api/generate', postData);
+
+    const title = await getTitle(result.data.response, lang);
+
+    return {
+        summarized: result.data.response,
+        title: title
+    };
+}
+
+async function getTitle(summarized, lang) {
+    const postData = {
+        model: "llama3",
+        prompt: `"${summarized}". A partir de ce texte, donne moi un titre ${lang} qui le résume. Il me faut juste le titre, pas besoin de commentaire.`,
+        stream: false
+    };
+
+    const result = await axios.post('http://localhost:11434/api/generate', postData)
+
     return result.data.response;
 }
 

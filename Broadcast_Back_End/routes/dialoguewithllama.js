@@ -19,7 +19,7 @@ router.post("/summarize", async (req, res) => {
         return res.status(400).send("URL is required");
     }
 
-    if(!req.body.lang) {
+    if (!req.body.lang) {
         return res.status(400).send("LANG is required");
     }
 
@@ -31,10 +31,15 @@ router.post("/summarize", async (req, res) => {
     }
 
     const sumamarize = require("../logique/summarize");
-    const summarized = await sumamarize(req.body.url, req.body.lang);
+    const dataAfterIA = await sumamarize(req.body.url, req.body.lang);
 
-    if (summarized) {
-        return res.status(200).json({"data": summarized});
+    if (dataAfterIA) {
+        return res.status(200).json({
+            "data": {
+                "summarized": dataAfterIA.summarized,
+                "title": dataAfterIA.title
+            }
+        });
     } else {
         return res.status(500).send("Error");
     }
@@ -44,10 +49,7 @@ function isValidUrl(url) {
     let stdout;
 
     try {
-        if (os.platform() === "win32")
-            stdout = execSync(`curl -o NUL -s -w "%{http_code}" "${url}"`, {encoding: 'utf-8'});
-        else
-            stdout = execSync(`curl -o /dev/null -s -w "%{http_code}" "${url}"`, {encoding: 'utf-8'});
+        if (os.platform() === "win32") stdout = execSync(`curl -o NUL -s -w "%{http_code}" "${url}"`, {encoding: 'utf-8'}); else stdout = execSync(`curl -o /dev/null -s -w "%{http_code}" "${url}"`, {encoding: 'utf-8'});
 
         const statusCode = parseInt(stdout, 10);
         return statusCode >= 200 && statusCode < 400;
