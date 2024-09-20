@@ -33,7 +33,7 @@ async function summarize(url, lang) {
     const result = await axios.post('http://localhost:11434/api/generate', postData);
     const summarized = result.data.response;
 
-    const promptForTitle = `"${summarized}": From this text, give me a title ${lang} that summarizes it. I just need the title, no need for a comment.`
+    const promptForTitle = `"${summarized}": From this text, give me a title ${lang} that summarizes it. I just need the title, no need for a comment, without quotes.`
     const title = await interactWithIa(promptForTitle);
 
     // const promptForThemes = `"${summarized}": A partir de ce texte, extrait moi une liste de 3 mots-clés, thèmes ${lang}, qui représente ce texte. Il me faut juste les mots-clés, thèmes, pas besoin de commentaire.`;
