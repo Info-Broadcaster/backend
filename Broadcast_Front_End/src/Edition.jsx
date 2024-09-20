@@ -13,7 +13,7 @@ export default function Edition() {
   const [content, setContent] = useState("");
   const [theme, setTheme] = useState(["Cinéma", "Musique", "Sport"]);
   const [isLoading, setIsLoading] = useState(true);
-  const isDebugMode = true;
+  const isDebugMode = false;
 
   useEffect(() => {
     console.log("la langue est ", lang);
