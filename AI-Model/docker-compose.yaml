@@ -2,15 +2,20 @@ version: '3.8'
 
 services:
   ollama:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ollama:/root/.ollama
+    image: ollama/ollama
+    container_name: ollama
     ports:
       - "11434:11434"
-    container_name: ollama
+    volumes:
+      - ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    runtime: nvidia
     restart: always
 
 volumes:
   ollama:
+
