@@ -4,41 +4,49 @@ import InputLabel from "./components/InputLabel";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Spinner from "./components/Spinner";
+import TagList from "./components/TagList";
+import DisplayFlag from "./components/DisplayFlag";
 
 export default function Edition() {
   const { link, lang } = useParams();
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
-  const [language, setLanguage] = useState("");
-  const [theme, setTheme] = useState("");
+  const [theme, setTheme] = useState(["Cinéma", "Musique", "Sport"]);
   const [isLoading, setIsLoading] = useState(true);
+  const isDebugMode = true;
 
   useEffect(() => {
     console.log("la langue est ", lang);
     setIsLoading(true);
-    axios
-      .post("http://localhost:443/api/dialoguewithllama/summarize", {
-        url: decodeURIComponent(link),
-        lang: lang,
-      })
-      .then((response) => {
-        console.log(response.data.data);
-        setContent(response.data.data);
-        if (response.data.status === "error") {
-          console.error(response.data.message);
-          return;
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [link, lang]);
+    if (!isDebugMode) {
+      axios
+        .post("http://localhost:443/api/dialoguewithllama/summarize", {
+          url: decodeURIComponent(link),
+          lang: lang,
+        })
+        .then((response) => {
+          console.log(response.data.data);
+          setContent(response.data.data);
+          if (response.data.status === "error") {
+            console.error(response.data.message);
+            return;
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setContent("Mode debug activé");
+      setIsLoading(false);
+    }
+  }, [link, lang, isDebugMode]);
 
   return (
     <PageLayer title="Edition">
+      <DisplayFlag flagCode={lang} />
       <div className="py-10">{/* <SnackBar /> */}</div>
       {isLoading ? (
         <Spinner />
@@ -46,7 +54,7 @@ export default function Edition() {
         <div className="flex w-full flex-col gap-5">
           <InputLabel label="Lien" value={link} disabled={true} />
           <InputLabel
-            label="Sujet"
+            label="Titre de l'article"
             setValue={(e) => setSubject(e.target.value)}
             value={subject}
           />
@@ -56,16 +64,12 @@ export default function Edition() {
             value={content}
             textarea={true}
           />
-          <InputLabel
-            label="Langue"
-            setValue={(e) => setLanguage(e.target.value)}
-            value={language}
-          />
-          <InputLabel
-            label="Thème"
-            setValue={(e) => setTheme(e.target.value)}
-            value={theme}
-          />
+          <div className="flex items-center justify-center w-full gap-5">
+            <span className="w-1/6">
+              <label>Catégories</label>
+            </span>
+            <TagList tags={theme} />
+          </div>
         </div>
       )}
     </PageLayer>

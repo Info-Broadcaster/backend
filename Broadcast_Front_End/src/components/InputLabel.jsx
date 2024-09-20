@@ -20,7 +20,9 @@ export default function InputLabel({
       ) : (
         <input
           type="text"
-          className="border w-5/6 text-start p-4"
+          className={`border w-5/6 text-start p-4 ${
+            disabled && "bg-gray-100 cursor-not-allowed"
+          }`}
           placeholder={placeholder}
           value={value}
           onChange={(event) => setValue(event.target.value)}
