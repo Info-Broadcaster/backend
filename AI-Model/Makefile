@@ -13,3 +13,6 @@ run: build gpu pull-model
 	@echo "Starting Docker containers with GPU support..."
 	@docker-compose up -d
 
+stop:
+	@echo "Stoping LLM Model..."
+	@docker-compose stop
