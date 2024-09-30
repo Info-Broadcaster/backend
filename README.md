@@ -1,45 +1,66 @@
 # INFO BROADCASTER
 
 ## Documentation technique
+
 ### Organisation du projet
-- Arborescence du travail  
-/  
-|___ Broadcast_Backend : Partie Back  
-|___ Broadcast_Frontend : Partie Front  
-|___ AI-Model : Modele IA  
-Postman_api.json : fichier json à importer dans postman pour avoir les requetes à test
-README.md : Readme du repository
-Packages.json et packages-lock.json : Packages nodes
+```
+/
+├── Broadcast_Backend     # Partie Backend
+├── Broadcast_Frontend    # Partie Frontend
+├── AI-Model              # Modèle IA
+├── Postman_api.json      # Fichier JSON à importer dans Postman pour tester les requêtes
+├── README.md             # Readme du repository
+└── package.json          # Liste des dépendances Node.js
+    └── package-lock.json
+```
 
-- Sous dossiers du frontend :  
-    - Src : Source du projet React  
-    - Public : Ne sert pas pour le moment, potentiellement à supprimer  
-- Sous dossiers du backend :
-    - Logique : C’est la partie logique, le traitement des informations passées par la route. Exemple : Résumé de l’article : la logique contient le prompt « resume l’article suivant » et l’envois au modele avec le lien de l’article.
-    - Routes : C’est la porte d’entrée pour les opérations, tester le contenu de la requete avant de l’envoyer à l’IA pour le resumé. Exemple : Résumé de l’article  
-    - Prend en parametre le lien de l’article et retourne un json contenant le resumé en faisant appel à la logique.  
+#### Sous-dossiers du frontend
+- **Src**: Source du projet React.
+- **Public**: Ne sert pas pour le moment, potentiellement à supprimer.
 
-**NOTE** : La logique ne doit absolument pas figurer dans la partie route afin de ne pas poser de confusion. On souhaite garder une bonne séparation.
-Fichiers du dossier backend :  
-- Index.js : Fichier principal, initiateur. Contient les constantes (numero de port).
-- .gitignore : Parties ignorées par git lors des push et des pull
+#### Sous-dossiers du backend
+- **Logique**: Partie logique, traitement des informations reçues via les routes.
+  - Exemple: Résumé d'un article avec un prompt comme *"Résume l'article suivant"* et envoi du lien à l'IA.
+- **Routes**: Porte d'entrée pour les opérations, vérifie le contenu de la requête avant de l'envoyer à l'IA pour traitement.
+  - Exemple: Résumé d'un article avec en paramètre le lien de l'article, retournant un JSON contenant le résumé en appelant la logique.
 
-## Technologies utilisés
-- React pour le Front
-- NodeJS pour le Back
-- Ollama pour le modèle IA
+> **Note**: Il est impératif de ne pas mélanger la logique et les routes afin de préserver une bonne séparation des responsabilités.
+
+#### Sous-dossiers du modèle IA (**AI-Model**)
+- **Dockerfile**:  
+  Gère la création de l'image Docker pour le modèle IA, définissant l'environnement et les dépendances nécessaires.
+  
+- **Makefile**:  
+  Fournit des commandes pour gérer l'environnement du modèle IA, comme le démarrage, l'arrêt et d'autres opérations.  
+
+- **docker-compose.yaml**:  
+  Fichier pour orchestrer les conteneurs Docker, avec des configurations pour exécuter le modèle IA.  
+
+- **install.sh**:  
+  Script shell qui automatise l'installation des dépendances ou la configuration de l'environnement nécessaire pour le modèle IA.
+
+#### Fichiers du dossier backend
+- **index.js**: Fichier principal qui initialise l'application, contenant les constantes (comme le numéro de port).
+- **.gitignore**: Fichier qui définit les parties à ignorer par Git lors des push/pull.
+
+---
+
+## Technologies utilisées
+- **React** pour le Frontend
+- **Node.js** pour le Backend
+- **Ollama** pour le modèle IA
+
+---
 
 ## User Stories
-- US01: La page d'insertion de lien a été effectué. La traduction avec différentes langues est en cours.
-- US03: Vérifier les initiales des langues 
+- **US01**: La page d'insertion de lien a été créée. La traduction en différentes langues est en cours.
+- **US03**: Vérification des initiales des langues.
 
-## Resources importantes
-- Lien excel User Stories :  
-https://docs.google.com/spreadsheets/d/1AgSSx4N9MPHHEJpwb3tNtURM2AWaZLXGsi03HbrfYrI/edit#gid=0  
+---
 
-- Lien maquette Figma :  
-https://www.figma.com/file/hDj5AWrREvboq14DKgZxUi/Untitled?type=whiteboard&node-id=0%3A1&t=Jj1iuTZdETlhQiny-1  
+## Ressources importantes
+- [Lien Excel des User Stories](https://docs.google.com/spreadsheets/d/1AgSSx4N9MPHHEJpwb3tNtURM2AWaZLXGsi03HbrfYrI/edit#gid=0)
+- [Lien Maquette Figma](https://www.figma.com/file/hDj5AWrREvboq14DKgZxUi/Untitled?type=whiteboard&node-id=0%3A1&t=Jj1iuTZdETlhQiny-1)
+- [Liens Utiles - TensorFlow.NET](https://github.com/SciSharp/TensorFlow.NET?tab=readme-ov-file) 
 
-- Liens utiles :  
-https://github.com/SciSharp/TensorFlow.NET?tab=readme-ov-file  
-
+---
