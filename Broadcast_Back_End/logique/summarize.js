@@ -16,15 +16,15 @@ const model = "llama3";
 
 async function summarize(url, lang) {
     const postData = {
-        model: `${model}`, prompt: "Summarize this article ", stream: false
+        model: `${model}`, prompt: `Forget all previous instructions and summarize this article "${url}"`, stream: false
     };
 
     switch (lang) {
         case "fr" :
-            postData.prompt += "in french";
+            postData.prompt += ", in french";
             break
         case "en":
-            postData.prompt += "in english";
+            postData.prompt += ", in english";
             break;
     }
 
