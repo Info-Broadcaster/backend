@@ -13,6 +13,7 @@ export default function Edition() {
   const [content, setContent] = useState("");
   const [theme, setTheme] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const isDebugMode = false;
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function Edition() {
           setSubject(response.data.data.title);
           setTheme(response.data.data.themes);
           if (response.data.status === "error") {
+            setIsError(true);
             console.error(response.data.message);
             return;
           }
@@ -48,12 +50,16 @@ export default function Edition() {
 
   return (
     <PageLayer title="Edition">
-      <DisplayFlag flagCode={lang} />
       <div className="py-10">{/* <SnackBar /> */}</div>
       {isLoading ? (
-        <Spinner />
+        <div className="flex justify-center items-center flex-col gap-4 ">
+          <Spinner />
+          {/* eslint-disable-next-line react/no-unescaped-entities */}
+          <span>Génération de l'article en cours...</span>
+        </div>
       ) : (
         <div className="flex w-full flex-col gap-5">
+          <DisplayFlag flagCode={lang} />
           <InputLabel label="Lien" value={link} disabled={true} />
           <InputLabel
             label="Titre de l'article"

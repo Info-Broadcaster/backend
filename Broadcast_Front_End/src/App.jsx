@@ -25,6 +25,7 @@ function App() {
   return (
     <PageLayer>
       <div className="flex flex-col w-full items-center gap-10">
+        <img src="/logo1.png" className="rounded-full h-28 w-28" />
         <h1 className="text-4xl">Bienvenue sur InfoBroadcaster</h1>
         <p>
           InfoBroadcaster est une application de diffusion d'informations, elle
