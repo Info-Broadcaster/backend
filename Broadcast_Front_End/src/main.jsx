@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Edition from "./Edition.jsx";
+import LogIn from "./LogIn.jsx";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
   {
     path: "/edition/:link/:lang?",
     element: <Edition />,
+  },
+  {
+    path: "/connexion",
+    element: <LogIn />,
   },
 ]);
 

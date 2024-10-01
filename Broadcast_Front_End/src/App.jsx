@@ -10,6 +10,10 @@ function App() {
   const [selectedLanguage, setSelectedLanguage] = useState("fr");
   const navigate = useNavigate();
   function generateArticle() {
+    if (link === "") {
+      alert("Veuillez entrer un lien");
+      return;
+    }
     navigate(`/edition/${encodeURIComponent(link)}/${selectedLanguage}`);
   }
 

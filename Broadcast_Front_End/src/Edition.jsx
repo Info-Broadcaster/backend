@@ -3,9 +3,9 @@ import PageLayer from "./PageLayer";
 import InputLabel from "./components/InputLabel";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import Spinner from "./components/Spinner";
 import TagList from "./components/TagList";
 import DisplayFlag from "./components/DisplayFlag";
+import AdvancedSpinner from "./components/AdvancedSpinner";
 
 export default function Edition() {
   const { link, lang } = useParams();
@@ -13,8 +13,8 @@ export default function Edition() {
   const [content, setContent] = useState("");
   const [theme, setTheme] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-  const isDebugMode = false;
+  // const [isError, setIsError] = useState(false);
+  const isDebugMode = true;
 
   useEffect(() => {
     console.log("la langue est ", lang);
@@ -31,7 +31,7 @@ export default function Edition() {
           setSubject(response.data.data.title);
           setTheme(response.data.data.themes);
           if (response.data.status === "error") {
-            setIsError(true);
+            // setIsError(true);
             console.error(response.data.message);
             return;
           }
@@ -53,7 +53,7 @@ export default function Edition() {
       <div className="py-10">{/* <SnackBar /> */}</div>
       {isLoading ? (
         <div className="flex justify-center items-center flex-col gap-4 ">
-          <Spinner />
+          <AdvancedSpinner />
           {/* eslint-disable-next-line react/no-unescaped-entities */}
           <span>Génération de l'article en cours...</span>
         </div>

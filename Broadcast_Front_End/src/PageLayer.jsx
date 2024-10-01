@@ -5,8 +5,10 @@ export default function PageLayer({ title = undefined, children }) {
     <>
       <Header />
       <main className=" w-full p-20">
-        {title == undefined ? null : (
-          <h1 className="text-2xl uppercase pb-20">{title}</h1>
+        {title == undefined ? (
+          <br />
+        ) : (
+          <h1 className="text-2xl uppercase ">{title}</h1>
         )}
         <div>{children}</div>
       </main>
