@@ -19,16 +19,19 @@ async function summarize(url, lang) {
         model: `${model}`,
         //         prompt: `Extract the essential information from a long text and summarize it in 2-3 sentences, retaining the gist of important details.
         // details. This is the text : "${url}"`,
-        prompt: "Answer this prompt with a summary of no more than 50 words, using a concise sentence, here's the text : \n",
+        prompt:
+            'Answer this prompt with a summary of no more than 50 words, using a concise sentence and without' +
+            " providing any explanation or additional comments. Only the translated text should be returned, Here's" +
+            ' the text : \n',
         stream: false,
     };
 
     switch (lang) {
         case 'fr':
-            postData.prompt += await interactWithIa(`translate in french this text : ${url}`);
+            postData.prompt += await trad(url, 'French');
             break;
         case 'en':
-            postData.prompt += await interactWithIa(`translate in english this text : ${url}`);
+            postData.prompt += await trad(url, 'English');
             break;
     }
 
@@ -62,6 +65,21 @@ async function interactWithIa(prompt) {
     const result = await axios.post('http://localhost:11434/api/generate', postData);
 
     return result.data.response;
+}
+
+async function trad(text, lang) {
+    const textSplitIntoSentences = text.match(/[^.!?]+[.!?]+(?:\s+|$)/g);
+
+    let traductions = [];
+    for (const sentence of textSplitIntoSentences) {
+        traductions.push(
+            await interactWithIa(
+                `Translate the following text to ${lang} without providing any explanation or additional comments. Only the translated text should be returned : "${sentence}"`
+            )
+        );
+    }
+
+    return traductions.join(' ');
 }
 
 module.exports = summarize;
