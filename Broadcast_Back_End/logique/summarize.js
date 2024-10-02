@@ -1,5 +1,4 @@
 const axios = require('axios');
-const {post} = require("axios");
 
 /*
 Description:
@@ -12,35 +11,47 @@ Retour:
 Une promesse contenant le résumé de l'article
  */
 
-const model = "llama3";
+const model = 'llama3.2:3b';
 
 async function summarize(url, lang) {
     const postData = {
-        model: `${model}`, prompt: "Résume moi cette article ", stream: false
+        // model: `${model}`, prompt: `Forget all previous instructions and summarize this article "${url}", in two short sentence maximal `, stream: false
+        model: `${model}`,
+        //         prompt: `Extract the essential information from a long text and summarize it in 2-3 sentences, retaining the gist of important details.
+        // details. This is the text : "${url}"`,
+        prompt:
+            'Answer this prompt with a summary of no more than 50 words, using a concise sentence and without' +
+            " providing any explanation or additional comments. Only the translated text should be returned, Here's" +
+            ' the text : \n',
+        stream: false,
     };
 
     switch (lang) {
-        case "fr" :
-            postData.prompt += "en français";
-            break
-        case "en":
-            postData.prompt += "en anglais";
+        case 'fr':
+            postData.prompt += await trad(url, 'French');
+            break;
+        case 'en':
+            postData.prompt += await trad(url, 'English');
             break;
     }
 
-    postData.prompt += url;
+    // postData.prompt += url;
 
     const result = await axios.post('http://localhost:11434/api/generate', postData);
     const summarized = result.data.response;
 
-    const promptForTitle = `"${summarized}": A partir de ce texte, donne moi un titre ${lang} qui le résume. Il me faut juste le titre, pas besoin de commentaire.`
+    const promptForTitle = `"${summarized}": From this text, give me a title that summarizes it. I just need the title, no need for a comment, without quotes.`;
     const title = await interactWithIa(promptForTitle);
 
-    const promptForThemes = `"${summarized}": A partir de ce texte, extrait moi une liste de 3 mots-clés, thèmes ${lang}, qui représente ce texte. Il me faut juste les mots-clés, thèmes, pas besoin de commentaire.`;
-    const themes = await interactWithIa(promptForThemes);
+    // const promptForThemes = `"${summarized}": A partir de ce texte, extrait moi une liste de 3 mots-clés, thèmes ${lang}, qui représente ce texte. Il me faut juste les mots-clés, thèmes, pas besoin de commentaire.`;
+    const promptForThemes = `Analyze the following text: "${summarized}". Identify and list 3 keywords, that summarize the main themes. Present the results as a comma-separated list. Just answer me with your analysis, without further comment or presentation of the data.`;
+    let themes = await interactWithIa(promptForThemes);
+    themes = themes.split(', ');
 
     return {
-        summarized: result.data.response, title, themes,
+        summarized: result.data.response,
+        title,
+        themes,
     };
 }
 
@@ -48,12 +59,27 @@ async function interactWithIa(prompt) {
     const postData = {
         model: `${model}`,
         prompt: `${prompt}`,
-        stream: false
+        stream: false,
     };
 
     const result = await axios.post('http://localhost:11434/api/generate', postData);
 
     return result.data.response;
+}
+
+async function trad(text, lang) {
+    const textSplitIntoSentences = text.match(/[^.!?]+[.!?]+(?:\s+|$)/g);
+
+    let traductions = [];
+    for (const sentence of textSplitIntoSentences) {
+        traductions.push(
+            await interactWithIa(
+                `Translate the following text to ${lang} without providing any explanation or additional comments. Only the translated text should be returned : "${sentence}"`
+            )
+        );
+    }
+
+    return traductions.join(' ');
 }
 
 module.exports = summarize;

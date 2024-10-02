@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {execSync} = require('child_process');
+const { execSync } = require('child_process');
 const os = require('os');
 
 /*
@@ -14,43 +14,51 @@ L'url de l'article qu'on souhaite résumer.
 Retour:
 Retourne un JSON avec l'article résumé dans la ppt data
  */
-router.post("/summarize", async (req, res) => {
+router.post('/summarize', async (req, res) => {
     if (!req.body.url) {
-        return res.status(400).send("URL is required");
+        return res.status(400).send('URL is required');
     }
 
     if (!req.body.lang) {
-        return res.status(400).send("LANG is required");
+        return res.status(400).send('LANG is required');
     }
 
     // vérifier lang qu'il soit bien FR, EN, IT ...
 
-    const isValideUrl = isValidUrl(req.body.url);
-    if (!isValideUrl) {
-        return res.status(400).json("Invalid URL or URL is not reachable");
-    }
+    // const isValideUrl = isValidUrl(req.body.url);
+    // if (!isValideUrl) {
+    //     return res.status(400).json("Invalid URL or URL is not reachable");
+    // }
 
-    const sumamarize = require("../logique/summarize");
+    const sumamarize = require('../logique/summarize');
     const dataAfterIA = await sumamarize(req.body.url, req.body.lang);
 
     if (dataAfterIA) {
         return res.status(200).json({
-            "data": {
-                "summarized": dataAfterIA.summarized,
-                "title": dataAfterIA.title,
-                "themes": [dataAfterIA.themes],
-            }
+            data: {
+                summarized: dataAfterIA.summarized,
+                title: dataAfterIA.title,
+                themes: dataAfterIA.themes,
+            },
         });
     } else {
-        return res.status(500).send("Error");
+        return res.status(500).send('Error');
     }
-})
+});
 
 function isValidUrl(url) {
     let stdout;
 
     try {
-        if (os.platform() === "win32") stdout = execSync(`curl -o NUL -s -w "%{http_code}" "${url}"`, {encoding: 'utf-8'}); else stdout = execSync(`curl -o /dev/null -s -w "%{http_code}" "${url}"`, {encoding: 'utf-8'});
+        if (os.platform() === 'win32')
+            stdout = execSync(`curl -o NUL -s -w "%{http_code}" "${url}"`, {
+                encoding: 'utf-8',
+            });
+        else
+            stdout = execSync(
+                `curl -o /dev/null -s -w "%{http_code}" "${url}"`,
+                { encoding: 'utf-8' }
+            );
 
         const statusCode = parseInt(stdout, 10);
         return statusCode >= 200 && statusCode < 400;
