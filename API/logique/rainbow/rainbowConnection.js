@@ -89,7 +89,19 @@ class Rainbow {
                     "start_up": true,
                 } //need services :
             }
-        })
+        });
+        this.sdk.events.on("rainbow_onmessagereceived", (message) => {
+            // Check if the message is not from you
+            if(!message.fromJid.includes(this.sdk.connectedUser.jid_im)) {
+                // Check that the message is from a user and not a bot
+                if( message.type === "groupchat") {
+                    // Reply to the message
+                    let messageSent = this.sdk.im.sendMessageToBubbleJidAnswer("I got it!", message.fromBubbleJid, "FR", null, 'subject', message);
+                }
+            }
+        });
+
+
     }
 
     async connect() {
@@ -98,6 +110,33 @@ class Rainbow {
             console.log("Rainbow connection works !");
         } catch (error) {
             console.log("Rainbow connection failed ! ", error);
+            throw error;
+        }
+    }
+
+    async getAllBubbles() {
+        try {
+            let bubbles = this.sdk.bubbles.getAll();
+            console.log("Bubbles retrieved !")
+            return bubbles;
+        } catch (error) {
+            console.log("Cannot get bubbles ! ", error);
+        }
+    }
+
+    async sendMessageToBubble(bubbleJid, message, subject = '', mentions = null, urgency = 'std') {
+        try {
+            const content = {
+                type: 'text',
+                message: message
+            };
+
+            let sentMessage = await this.sdk.im.sendMessageToBubbleJid(message, bubbleJid, "FR", null, 'subject', message);
+
+            console.log("Message sent to bubble:", sentMessage);
+            return sentMessage;
+        } catch (error) {
+            console.error("Error sending message to bubble:", error);
             throw error;
         }
     }
