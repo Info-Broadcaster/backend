@@ -1,24 +1,17 @@
-# INFO BROADCASTER
-
-## Documentation technique
+# Info Broadcaster Backend
 
 ### Organisation du projet
 ```
 /
-├── Broadcast_Backend     # Partie Backend
-├── Broadcast_Frontend    # Partie Frontend
+├── API                   # Dossier contenant l'API avec les logiques de resumé et traduction
 ├── AI-Model              # Modèle IA
-├── Postman_api.json      # Fichier JSON à importer dans Postman pour tester les requêtes
+├── postman-api           # Fichier  à importer dans Postman pour tester les requêtes
 ├── README.md             # Readme du repository
 └── package.json          # Liste des dépendances Node.js
     └── package-lock.json
 ```
 
-#### Sous-dossiers du frontend
-- **Src**: Source du projet React.
-- **Public**: Ne sert pas pour le moment, potentiellement à supprimer.
-
-#### Sous-dossiers du backend
+#### Sous-dossier API
 - **Logique**: Partie logique, traitement des informations reçues via les routes.
   - Exemple: Résumé d'un article avec un prompt comme *"Résume l'article suivant"* et envoi du lien à l'IA.
 - **Routes**: Porte d'entrée pour les opérations, vérifie le contenu de la requête avant de l'envoyer à l'IA pour traitement.
@@ -46,9 +39,8 @@
 ---
 
 ## Technologies utilisées
-- **React** pour le Frontend
-- **Node.js** pour le Backend
-- **Ollama** pour le modèle IA
+- **Node.js express** pour le Backend
+- **Ollama** pour le package manager du modèle IA
 
 ---
 
