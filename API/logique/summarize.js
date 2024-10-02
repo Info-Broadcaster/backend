@@ -1,11 +1,14 @@
 const axios = require('axios');
+const { generatePrompt, interactWithIa, trad, whichLanguage } = require('../utils');
 
 /*
 Description:
-La fonction summarize envoie une requête POST à une API locale pour obtenir le résumé d'un article spécifié par une URL.
+La fonction summarize envoie une requête POST à une API locale pour obtenir le résumé d'un article textuel.
 
 Paramètres:
-url (String) : L'URL de l'article à résumer.
+websiteContentInText (String) : Le contenu de l'url en texte.
+
+lang (String): La langue du résultat.
 
 Retour:
 Une promesse contenant le résumé de l'article
@@ -13,19 +16,7 @@ Une promesse contenant le résumé de l'article
 
 const model = 'llama3.2:3b';
 
-async function summarize(url, lang) {
-    const postData = {
-        // model: `${model}`, prompt: `Forget all previous instructions and summarize this article "${url}", in two short sentence maximal `, stream: false
-        model: `${model}`,
-        //         prompt: `Extract the essential information from a long text and summarize it in 2-3 sentences, retaining the gist of important details.
-        // details. This is the text : "${url}"`,
-        prompt:
-            'Answer this prompt with a summary of no more than 100 words, using a concise sentence and without' +
-            " providing any explanation or additional comments. Only the translated text should be returned, Here's" +
-            ' the text : \n',
-        stream: false,
-    };
-
+async function summarize(websiteContentInText, lang) {
     switch (lang) {
         case 'fr':
             lang = 'French';
@@ -35,57 +26,58 @@ async function summarize(url, lang) {
             break;
     }
 
-    postData.prompt += `"${await trad(url, lang)}"`;
+    const prompt = generatePrompt(
+        model,
+        'You are a summarizer. You will summarize any text provided to you. ' +
+            'No more than 50 words. Only provide the summary itself without any introduction, explanation, ' +
+            'or additional information.',
+        websiteContentInText
+    );
 
-    // postData.prompt += url;
+    const result = await axios.post('http://localhost:11434/api/chat', prompt);
+    let summarized = result.data.message.content;
 
-    const result = await axios.post('http://localhost:11434/api/generate', postData);
-    const summarized = result.data.response;
+    let usedLanguage;
+    switch (await whichLanguage(model, summarized)) {
+        case 'French':
+            usedLanguage = 'French';
+            break;
+        case 'English':
+            usedLanguage = 'English';
+            break;
+    }
 
-    const promptForTitle = `"${summarized}": From this text, give me a title to ${lang} that summarizes it and without providing any explanation or additional comments. Only the title should be returned`;
-    const title = await interactWithIa(promptForTitle);
+    let title = await interactWithIa(
+        generatePrompt(
+            model,
+            'Generate a concise and accurate title. ' +
+                'Respond only with the title and provide no explanation or additional comments.',
+            websiteContentInText
+        )
+    );
 
-    // const promptForThemes = `"${summarized}": A partir de ce texte, extrait moi une liste de 3 mots-clés, thèmes ${lang}, qui représente ce texte. Il me faut juste les mots-clés, thèmes, pas besoin de commentaire.`;
-    const promptForThemes = `Analyze the following text: "${summarized}". Identify and list 3 keywords to ${lang}, that summarize the main themes. Present the results as a comma-separated list and without providing any explanation or additional comments. Only the list of theme should be returned.`;
-    let themes = await interactWithIa(promptForThemes);
-    themes = themes.split(', ');
+    let themes = await interactWithIa(
+        generatePrompt(
+            model,
+            'Extract up only to three most important keywords. ' +
+                'Respond only with the keywords, separated by commas.' +
+                ' If fewer than three keywords are identified, provide only the ones found.' +
+                ' Do not provide any explanation or additional comments.',
+            websiteContentInText
+        )
+    );
+
+    if (usedLanguage !== lang) {
+        summarized = await trad(model, summarized, lang);
+        title = await trad(model, title, lang);
+        themes = await trad(model, themes, lang);
+    }
 
     return {
-        summarized: result.data.response,
+        summarized,
         title,
         themes,
     };
-}
-
-async function interactWithIa(prompt) {
-    const postData = {
-        model: `${model}`,
-        prompt: `${prompt}`,
-        stream: false,
-    };
-
-    const result = await axios.post('http://localhost:11434/api/generate', postData);
-
-    return result.data.response;
-}
-
-async function trad(text, lang) {
-    const textSplitIntoSentences = text.match(/[^.!?]+[.!?]+(?:\s+|$)/g);
-
-    if(!textSplitIntoSentences){
-        return text;
-    }
-
-    let traductions = [];
-    for (const sentence of textSplitIntoSentences) {
-        traductions.push(
-            await interactWithIa(
-                `Translate the following text to ${lang} without providing any explanation or additional comments. Only the translated text should be returned : "${sentence}"`
-            )
-        );
-    }
-
-    return traductions.join(' ');
 }
 
 module.exports = summarize;

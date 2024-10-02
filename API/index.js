@@ -20,9 +20,6 @@ app.use('/api/hello', helloRoute);
 const dialoguewithllama = require('./routes/dialoguewithllama');
 app.use('/api/dialoguewithllama', dialoguewithllama);
 
-const extractDataFromUrl = require('./routes/extractDataFromUrl');
-app.use('/api/extractDataFromUrl', extractDataFromUrl);
-
 app.listen(PORT, () => {
     console.log(`Server listen on port ${PORT}`);
 });
