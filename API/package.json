@@ -15,7 +15,8 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "nodemon": "^3.1.0",
-    "puppeteer": "^23.4.1"
+    "puppeteer": "^23.4.1",
+    "rainbow-node-sdk": "^2.25.2-lts.10"
   },
   "devDependencies": {
     "prettier": "^3.3.3"
