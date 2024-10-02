@@ -1,6 +1,6 @@
 # Info Broadcaster Backend
 
-### Organisation du projet
+## Organisation du projet
 ```
 /
 ├── API                   # Dossier contenant l'API avec les logiques de resumé et traduction
@@ -11,7 +11,7 @@
     └── package-lock.json
 ```
 
-#### Sous-dossier API
+### Sous-dossier API
 - **Logique**: Partie logique, traitement des informations reçues via les routes.
   - Exemple: Résumé d'un article avec un prompt comme *"Résume l'article suivant"* et envoi du lien à l'IA.
 - **Routes**: Porte d'entrée pour les opérations, vérifie le contenu de la requête avant de l'envoyer à l'IA pour traitement.
@@ -19,7 +19,7 @@
 
 > **Note**: Il est impératif de ne pas mélanger la logique et les routes afin de préserver une bonne séparation des responsabilités.
 
-#### Sous-dossiers du modèle IA (**AI-Model**)
+### Sous-dossiers du modèle IA (**AI-Model**)
 - **Dockerfile**:  
   Gère la création de l'image Docker pour le modèle IA, définissant l'environnement et les dépendances nécessaires.
   
@@ -32,9 +32,25 @@
 - **install.sh**:  
   Script shell qui automatise l'installation des dépendances ou la configuration de l'environnement nécessaire pour le modèle IA.
 
-#### Fichiers du dossier backend
+### Fichiers du dossier backend
 - **index.js**: Fichier principal qui initialise l'application, contenant les constantes (comme le numéro de port).
 - **.gitignore**: Fichier qui définit les parties à ignorer par Git lors des push/pull.
+
+---
+
+## Developpez localement
+Pour lancer l'environnement backend en local, naviguez dans le dossier API, et lancez les commandes suivantes:
+
+```shell
+npm start
+```
+
+Pour avoir un reload automatique du serveur NodeJS après modification des fichiers:
+
+```shell
+npm run local
+```
+> N.B: Cette commande est un alias du script node qui lancera nodemon.
 
 ---
 
