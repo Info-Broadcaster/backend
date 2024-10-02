@@ -28,10 +28,12 @@ async function summarize(url, lang) {
 
     switch (lang) {
         case 'fr':
-            postData.prompt += await trad(url, 'French');
+            lang = 'French';
+            postData.prompt += await trad(url, lang);
             break;
         case 'en':
-            postData.prompt += await trad(url, 'English');
+            lang = 'English';
+            postData.prompt += await trad(url, lang);
             break;
     }
 
@@ -40,11 +42,11 @@ async function summarize(url, lang) {
     const result = await axios.post('http://localhost:11434/api/generate', postData);
     const summarized = result.data.response;
 
-    const promptForTitle = `"${summarized}": From this text, give me a title that summarizes it. I just need the title, no need for a comment, without quotes.`;
+    const promptForTitle = `"${summarized}": From this text, give me a title to ${lang} that summarizes it and without providing any explanation or additional comments. Only the title should be returned`;
     const title = await interactWithIa(promptForTitle);
 
     // const promptForThemes = `"${summarized}": A partir de ce texte, extrait moi une liste de 3 mots-clés, thèmes ${lang}, qui représente ce texte. Il me faut juste les mots-clés, thèmes, pas besoin de commentaire.`;
-    const promptForThemes = `Analyze the following text: "${summarized}". Identify and list 3 keywords, that summarize the main themes. Present the results as a comma-separated list. Just answer me with your analysis, without further comment or presentation of the data.`;
+    const promptForThemes = `Analyze the following text: "${summarized}". Identify and list 3 keywords to ${lang}, that summarize the main themes. Present the results as a comma-separated list and without providing any explanation or additional comments. Only the list of theme should be returned.`;
     let themes = await interactWithIa(promptForThemes);
     themes = themes.split(', ');
 
