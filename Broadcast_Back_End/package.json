@@ -16,5 +16,8 @@
     "express": "^4.19.2",
     "nodemon": "^3.1.0",
     "puppeteer": "^23.4.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
   }
 }
