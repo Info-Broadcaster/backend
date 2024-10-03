@@ -1,4 +1,5 @@
 const axios = require('axios');
+require('dotenv').config();
 
 function generatePrompt(model, systemContent, userContent) {
     return {
@@ -15,12 +16,11 @@ function generatePrompt(model, systemContent, userContent) {
         ],
         stream: false,
         raw: true,
-        keep_alive: 0,
     };
 }
 
 async function interactWithIa(prompt) {
-    const result = await axios.post('http://localhost:11434/api/chat', prompt);
+    const result = await axios.post(process.env.MODEL_URL, prompt);
 
     return result.data.message.content;
 }

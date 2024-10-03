@@ -34,8 +34,7 @@ async function summarize(websiteContentInText, lang) {
         websiteContentInText
     );
 
-    const result = await axios.post('http://localhost:11434/api/chat', prompt);
-    let summarized = result.data.message.content;
+    let summarized = await interactWithIa(prompt);
 
     let usedLanguage;
     switch (await whichLanguage(model, summarized)) {
