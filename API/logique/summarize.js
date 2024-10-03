@@ -1,4 +1,3 @@
-const axios = require('axios');
 const { generatePrompt, interactWithIa, trad, whichLanguage } = require('../utils');
 
 /*
