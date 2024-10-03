@@ -3,14 +3,15 @@ const app = express();
 const cors = require('cors');
 const PORT = 3000;
 
-app.use(
-    cors({
-        origin: '*',
-        // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        // headers: 'Content-Type, Authorization',
-        // exposedHeaders: 'Authorization'
-    })
-);
+app.use(cors({ 
+    origin: "http://localhost:5173", 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
+    allowedHeaders: 'Content-Type, Authorization', 
+    exposedHeaders: 'Authorization', 
+    credentials: true 
+})); 
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
