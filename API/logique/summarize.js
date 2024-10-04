@@ -1,4 +1,3 @@
-const axios = require('axios');
 const { generatePrompt, interactWithIa, trad, whichLanguage } = require('../utils');
 
 /*
@@ -14,7 +13,9 @@ Retour:
 Une promesse contenant le résumé de l'article
  */
 
-const model = 'llama3.2:3b';
+const model = 'gemma2:9b';
+// const model = 'gemma2:9b-instruct-q5_K_M';
+// const model = 'llama3.2:3b-instruct-fp16';
 
 async function summarize(websiteContentInText, lang) {
     switch (lang) {
@@ -34,8 +35,7 @@ async function summarize(websiteContentInText, lang) {
         websiteContentInText
     );
 
-    const result = await axios.post('http://localhost:11434/api/chat', prompt);
-    let summarized = result.data.message.content;
+    let summarized = await interactWithIa(prompt);
 
     let usedLanguage;
     switch (await whichLanguage(model, summarized)) {
