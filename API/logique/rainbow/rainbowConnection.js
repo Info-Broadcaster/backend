@@ -2,53 +2,46 @@ const RainbowSDK = require('rainbow-node-sdk');
 
 class RainbowInteraction {
     constructor(email, password, appId, appSecret) {
-        // Rainbow SDK options
         this.options = {
             rainbow: {
                 host: "sandbox", // Use "sandbox" or "official" depending on your environment
             },
             credentials: {
-                login: email, // User email
-                password: password, // User password
+                login: email,
+                password: password,
             },
             application: {
-                appID: appId, // Application ID
-                appSecret: appSecret, // Application secret
+                appID: appId,
+                appSecret: appSecret,
             },
             logs: {
-                enableConsoleLogs: true, // Enable or disable console logs
-                enableFileLogs: false, // Enable or disable file logs
+                enableConsoleLogs: true,
+                enableFileLogs: false,
             },
             im: {
-                sendReadReceipt: true, // Automatically send read receipts
+                sendReadReceipt: true,
             },
         };
 
-        // Initialize Rainbow SDK
         this.rainbowSDK = new RainbowSDK(this.options);
         this.isReady = false;
 
-        // Start Rainbow SDK
         this.start();
     }
 
-    // Start the SDK and set up event listeners
     start() {
         this.rainbowSDK.start();
 
-        // Handle SDK ready event
         this.rainbowSDK.events.on("rainbow_onready", () => {
             console.log("Rainbow SDK is ready.");
             this.isReady = true;
         });
 
-        // Handle errors
         this.rainbowSDK.events.on("rainbow_onerror", (err) => {
             console.error("Rainbow SDK error:", err);
         });
     }
 
-    // Method to send a message to a bubble by its JID
     async sendMessageToBubble(bubbleJid, message) {
         if (!this.isReady) {
             console.log("SDK not ready yet, waiting...");
@@ -66,7 +59,23 @@ class RainbowInteraction {
         }
     }
 
-    // Stop the SDK
+    async getAllBubbles() {
+        if (!this.isReady) {
+            console.log("SDK not ready yet, waiting...");
+            // Wait for SDK to be ready
+            await new Promise((resolve) => {
+                this.rainbowSDK.events.once("rainbow_onready", resolve);
+            });
+        }
+
+        try {
+            const result = await this.rainbowSDK.bubbles.getAllBubbles();
+            console.log("Bubbles found ", result);
+        } catch (err) {
+            console.error("Error sending message:", err);
+        }
+    }
+
     stop() {
         this.rainbowSDK.stop();
     }
