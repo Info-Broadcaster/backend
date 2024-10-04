@@ -1,4 +1,4 @@
-const Rainbow = require("./rainbow/rainbowConnection");
+const Rainbow = require("./rainbow/rainbowInteraction");
 
 const email = "ian.bellot001@gmail.com";
 const password = "!ALEpass3128!";
