@@ -1,8 +1,12 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+require('dotenv').config();
 //const PORT = 3000;
 const PORT = process.env.PORT || 3000;
+
+const cookieParser = require('cookie-parser');
+const verifyToken = require('./logique/middleware');
 
 app.use(cors({ 
     origin: "http://localhost:5173", 
@@ -15,6 +19,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const helloRoute = require('./routes/hello');
 app.use('/api/hello', helloRoute);
@@ -29,7 +34,7 @@ const extractDataFromUrl = require('./routes/extractDataFromUrl');
 app.use('/api/extractDataFromUrl', extractDataFromUrl);
 
 const rainbowGetBubbles = require('./routes/rainbow-get-bubbles');
-app.use('/api/rainbowGetBubbles', rainbowGetBubbles);
+app.use('/api/rainbowGetBubbles', verifyToken, rainbowGetBubbles);
 
 app.listen(PORT, () => {
     console.log(`Server listen on port ${PORT}`);
