@@ -3,7 +3,7 @@ const router = express.Router();
 const Rainbow = require("../logique/rainbow/rainbowInteraction");
 
 
-router.post('/get-all-bubbles', (req, res) => {
+router.post('/', async (req, res) => {
     const { email, password, appId, appSecret } = req.body;
 
     if (!email || !password || !appId || !appSecret) {
@@ -14,16 +14,15 @@ router.post('/get-all-bubbles', (req, res) => {
 
     try {
 
-        let bubbles = rainbowSdk.getAllBubbles();
-        return res.json(bubbles).status(200);
+        const bubbles = await rainbowSdk.getAllBubbles();
+
+        console.log("Bubbles found ", bubbles);
+
+        return res.status(200).json(bubbles);
 
     } catch (error) {
 
         return res.status(400).json({ error: error });
-
-    } finally {
-
-        rainbowSdk.stop();
 
     }
 

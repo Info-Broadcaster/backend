@@ -69,8 +69,17 @@ class RainbowInteraction {
         }
 
         try {
-            const result = await this.rainbowSDK.bubbles.getAllBubbles();
-            console.log("Bubbles found ", result);
+            const bubbles = await this.rainbowSDK.bubbles.getAllBubbles();
+
+            const formattedBubbles = bubbles.map(bubble => ({
+                jid: bubble.jid,
+                name: bubble.name,
+                avatar: bubble.avatar,
+                topic: bubble.topic,
+            }));
+
+            return formattedBubbles;
+
         } catch (err) {
             console.error("Error sending message:", err);
         }
