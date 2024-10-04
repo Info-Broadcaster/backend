@@ -19,6 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 const helloRoute = require('./routes/hello');
 app.use('/api/hello', helloRoute);
 
+const login = require("./routes/login"); 
+app.use("/api/login", login); 
+
 const dialoguewithllama = require('./routes/dialoguewithllama');
 app.use('/api/dialoguewithllama', dialoguewithllama);
 
