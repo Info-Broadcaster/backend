@@ -23,6 +23,9 @@ app.use('/api/dialoguewithllama', dialoguewithllama);
 const extractDataFromUrl = require('./routes/extractDataFromUrl');
 app.use('/api/extractDataFromUrl', extractDataFromUrl);
 
+const rainbowGetBubbles = require('./routes/rainbow-get-bubbles');
+app.use('/api/rainbowGetBubbles', rainbowGetBubbles);
+
 app.listen(PORT, () => {
     console.log(`Server listen on port ${PORT}`);
 });
