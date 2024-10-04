@@ -13,7 +13,9 @@ Retour:
 Une promesse contenant le résumé de l'article
  */
 
-const model = 'llama3.2:3b';
+const model = 'gemma2:9b';
+// const model = 'gemma2:9b-instruct-q5_K_M';
+// const model = 'llama3.2:3b-instruct-fp16';
 
 async function summarize(websiteContentInText, lang) {
     switch (lang) {
