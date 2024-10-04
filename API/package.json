@@ -19,6 +19,7 @@
     "rainbow-node-sdk": "^2.25.2-lts.10"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
     "prettier": "^3.3.3"
   }
 }
