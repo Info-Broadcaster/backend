@@ -8,7 +8,7 @@ async function extractDataFromUrl(url, xpath) {
         height: 1000,
     });
 
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'networkidle0' });
 
     const body = await page.evaluate((xpath) => {
         if (xpath) {
