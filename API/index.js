@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 const verifyToken = require('./logique/middleware');
 
 app.use(cors({ 
-    origin: "http://localhost:5173", 
+    origin: process.env.FRONTEND_URL, 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
     allowedHeaders: 'Content-Type, Authorization', 
     exposedHeaders: 'Authorization', 
