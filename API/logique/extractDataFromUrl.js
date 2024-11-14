@@ -1,4 +1,6 @@
 const puppeteer = require('puppeteer');
+const { Readability } = require('@mozilla/readability');
+const { JSDOM } = require('jsdom');
 
 async function extractDataFromUrl(url, xpath) {
     const browser = await puppeteer.launch({ headless: false });
@@ -8,25 +10,16 @@ async function extractDataFromUrl(url, xpath) {
         height: 1000,
     });
 
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'networkidle0' });
 
-    const body = await page.evaluate((xpath) => {
-        if (xpath) {
-            const result = document.evaluate(
-                xpath,
-                document,
-                null,
-                XPathResult.FIRST_ORDERED_NODE_TYPE,
-                null
-            ).singleNodeValue;
-            return result ? result.innerText : null;
-        }
-        return document.body.innerText;
-    }, xpath);
+    const html = await page.content();
+    const dom = new JSDOM(html);
+    const reader = new Readability(dom.window.document);
+    const article = reader.parse().textContent;
 
     await browser.close();
 
-    return body.replace(/\s+/g, ' ');
+    return article.replace(/\s+/g, ' ');
 }
 
 module.exports = extractDataFromUrl;

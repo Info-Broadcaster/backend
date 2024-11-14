@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { execSync } = require('child_process');
-const os = require('os');
+const extractDataFromUrl = require('../logique/extractDataFromUrl');
+const sumamarize = require('../logique/summarize');
 
 /*
 Description:
@@ -30,15 +30,16 @@ router.post('/summarize', async (req, res) => {
     //     return res.status(400).json("Invalid URL or URL is not reachable");
     // }
 
-    const sumamarize = require('../logique/summarize');
-    const dataAfterIA = await sumamarize(req.body.url, req.body.lang);
+    const extractedDataFromUrl = await extractDataFromUrl(req.body.url, req.body.xpath);
+
+    const dataAfterIA = await sumamarize(extractedDataFromUrl, req.body.lang);
 
     if (dataAfterIA) {
         return res.status(200).json({
             data: {
                 summarized: dataAfterIA.summarized,
                 title: dataAfterIA.title,
-                themes: dataAfterIA.themes,
+                themes: dataAfterIA.themes.split(',').map((theme) => theme.trim()),
             },
         });
     } else {
@@ -46,25 +47,27 @@ router.post('/summarize', async (req, res) => {
     }
 });
 
-function isValidUrl(url) {
-    let stdout;
+router.post('/summarize/text', async (req, res) => {
+    // vérifier lang qu'il soit bien FR, EN, IT ...
 
-    try {
-        if (os.platform() === 'win32')
-            stdout = execSync(`curl -o NUL -s -w "%{http_code}" "${url}"`, {
-                encoding: 'utf-8',
-            });
-        else
-            stdout = execSync(
-                `curl -o /dev/null -s -w "%{http_code}" "${url}"`,
-                { encoding: 'utf-8' }
-            );
+    // const isValideUrl = isValidUrl(req.body.url);
+    // if (!isValideUrl) {
+    //     return res.status(400).json("Invalid URL or URL is not reachable");
+    // }
 
-        const statusCode = parseInt(stdout, 10);
-        return statusCode >= 200 && statusCode < 400;
-    } catch (error) {
-        return false;
+    const dataAfterIA = await sumamarize(req.body.text, req.body.lang);
+
+    if (dataAfterIA) {
+        return res.status(200).json({
+            data: {
+                summarized: dataAfterIA.summarized,
+                title: dataAfterIA.title,
+                themes: dataAfterIA.themes.split(',').map((theme) => theme.trim()),
+            },
+        });
+    } else {
+        return res.status(500).send('Error');
     }
-}
+});
 
 module.exports = router;
