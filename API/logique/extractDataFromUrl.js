@@ -3,7 +3,7 @@ const { Readability } = require('@mozilla/readability');
 const { JSDOM } = require('jsdom');
 
 async function extractDataFromUrl(url, xpath) {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({  args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     await page.setViewport({
         width: 1000,
