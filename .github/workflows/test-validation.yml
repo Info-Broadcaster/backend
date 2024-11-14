@@ -1,10 +1,8 @@
-name: Test suites validation
+name: Test Validation
 
 on:
   push:
     branches:
-      - main
-      - deploy
       - feat/*
   pull_request:
     branches:
