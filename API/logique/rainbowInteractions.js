@@ -14,7 +14,5 @@ rainbowSdk.connect()
     .then(() => {
         console.log('Rainbow connection established');
 
-        // Get all bubbles (chat rooms)
-        rainbowSdk.sendMessageToBubble(bubbletestjid, "COUCOU")
-            .then(() => console.log("Message sent !"));
-    })
+        rainbowSdk.sendMessageToBubble(bubbletestjid, "TEST MESSAGE").then(() => console.log("Hello !"))
+    });

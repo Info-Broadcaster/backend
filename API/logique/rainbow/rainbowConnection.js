@@ -90,17 +90,10 @@ class Rainbow {
                 } //need services :
             }
         });
-        this.sdk.events.on("rainbow_onmessagereceived", (message) => {
-            // Check if the message is not from you
-            if(!message.fromJid.includes(this.sdk.connectedUser.jid_im)) {
-                // Check that the message is from a user and not a bot
-                if( message.type === "groupchat") {
-                    // Reply to the message
-                    let messageSent = this.sdk.im.sendMessageToBubbleJidAnswer("I got it!", message.fromBubbleJid, "FR", null, 'subject', message);
-                }
-            }
-        });
 
+        this.sdk.events.on('rainbow_onmessagereceived', function() {
+            console.log("stopped");
+        });
 
     }
 
