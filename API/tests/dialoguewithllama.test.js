@@ -50,4 +50,16 @@ describe('POST /api/dialoguewithllama/summarize', () => {
             },
         });
     });
+
+    it('should return 500 if an error occurred', async () => {
+        summarize.mockResolvedValue(null);
+
+        const res = await request(app)
+            .post('/api/dialoguewithllama/summarize')
+            .set('Content-Type', 'application/json')
+            .send({ url: 'https://test.infobroadcaster.com', lang: 'EN' });
+
+        assert.strictEqual(res.status, 500);
+        assert.strictEqual(res.text, 'Error');
+    });
 });
