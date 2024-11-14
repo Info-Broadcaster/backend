@@ -21,6 +21,10 @@ app.use('/api/hello', helloRoute);
 const dialoguewithllama = require('./routes/dialoguewithllama');
 app.use('/api/dialoguewithllama', dialoguewithllama);
 
-app.listen(PORT, () => {
-    console.log(`Server listen on port ${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server listen on port ${PORT}`);
+    });
+}
+
+module.exports = app;
