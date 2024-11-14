@@ -12,7 +12,7 @@ jobs:
 
     - name: Branch name lint
       run: |
-        BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}")
+        BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
         if [[ ! "$BRANCH_NAME" =~ ^(feat|fix|tests)/ ]]; then
           echo "Branch name '$BRANCH_NAME' does not follow the convention 'feat/', 'fix/', or 'tests/'"
           exit 1
