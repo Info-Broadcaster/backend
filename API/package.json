@@ -17,11 +17,12 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "jsdom": "^25.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "mock-socket": "^9.3.1",
     "nodemon": "^3.1.0",
     "puppeteer": "^23.4.1",
-    "supertest": "^7.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "rainbow-node-sdk": "^2.25.2-lts.10"
+    "rainbow-node-sdk": "^2.25.2-lts.10",
+    "supertest": "^7.0.0"
   },
   "devDependencies": {
     "dotenv": "^16.4.5",
