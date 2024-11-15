@@ -4,11 +4,12 @@
 ```
 /
 ├── API                   # Dossier contenant l'API avec les logiques de resumé et traduction
+  └── package.json        # Liste des dépendances Node.js
+  └── package-lock.json
 ├── AI-Model              # Modèle IA
 ├── postman-api           # Fichier  à importer dans Postman pour tester les requêtes
 ├── README.md             # Readme du repository
-└── package.json          # Liste des dépendances Node.js
-    └── package-lock.json
+
 ```
 
 ### Sous-dossier API

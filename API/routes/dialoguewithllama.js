@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const extractDataFromUrl = require('../logique/extractDataFromUrl');
+const sumamarize = require('../logique/summarize');
 
 /*
 Description:
@@ -31,7 +32,6 @@ router.post('/summarize', async (req, res) => {
 
     const extractedDataFromUrl = await extractDataFromUrl(req.body.url, req.body.xpath);
 
-    const sumamarize = require('../logique/summarize');
     const dataAfterIA = await sumamarize(extractedDataFromUrl, req.body.lang);
 
     if (dataAfterIA) {
@@ -39,8 +39,31 @@ router.post('/summarize', async (req, res) => {
             data: {
                 summarized: dataAfterIA.summarized,
                 title: dataAfterIA.title,
-                themes: dataAfterIA.themes.split(',').map(theme => theme.trim()),
-            }
+                themes: dataAfterIA.themes.split(',').map((theme) => theme.trim()),
+            },
+        });
+    } else {
+        return res.status(500).send('Error');
+    }
+});
+
+router.post('/summarize/text', async (req, res) => {
+    // vérifier lang qu'il soit bien FR, EN, IT ...
+
+    // const isValideUrl = isValidUrl(req.body.url);
+    // if (!isValideUrl) {
+    //     return res.status(400).json("Invalid URL or URL is not reachable");
+    // }
+
+    const dataAfterIA = await sumamarize(req.body.text, req.body.lang);
+
+    if (dataAfterIA) {
+        return res.status(200).json({
+            data: {
+                summarized: dataAfterIA.summarized,
+                title: dataAfterIA.title,
+                themes: dataAfterIA.themes.split(',').map((theme) => theme.trim()),
+            },
         });
     } else {
         return res.status(500).send('Error');

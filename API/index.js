@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 const verifyToken = require('./logique/middleware');
 
 app.use(cors({ 
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', 
+    origin: "*",
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
     allowedHeaders: 'Content-Type, Authorization', 
     exposedHeaders: 'Authorization', 
@@ -36,6 +36,10 @@ app.use('/api/extractDataFromUrl', extractDataFromUrl);
 const rainbowGetBubbles = require('./routes/rainbow-get-bubbles');
 app.use('/api/rainbowGetBubbles', verifyToken, rainbowGetBubbles);
 
-app.listen(PORT, () => {
-    console.log(`Server listen on port ${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server listen on port ${PORT}`);
+    });
+}
+
+module.exports = app;
