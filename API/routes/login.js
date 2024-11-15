@@ -17,7 +17,6 @@ router.post("/", async (req, res) => {
     //TODO: verifier si le username et le password sont corrects sur rainbow
     const rainbowSdk = new Rainbow(req.body.username, req.body.password, process.env.APP_ID, process.env.APP_SECRET)
     if (rainbowSdk.loginError === false) {
-        rainbowSdk.stop();
         return res.status(400).json({
             "error": "Incorrect username or password"
         });
