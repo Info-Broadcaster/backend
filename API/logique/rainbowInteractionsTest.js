@@ -1,13 +1,13 @@
 const Rainbow = require("./rainbow/rainbowInteraction");
 
-const email = "mister.dusbin777@gmail.com";
-const password = "D6N{Uz[B5[])";
+const email = "ian.bellot001@gmail.com";
+const password = "!ALEpass3128";
 const appId = "255f2b9080fd11efa6661b0bb9c90370";
 const appSecret = "Tiw4OORLjL0WTjYbmym6Z2o9p0AuPakNGQUM6bAnRyyJQ7muBz27wmBcxVxWuTix";
 
 const rainbowSdk = new Rainbow(email, password, appId, appSecret);
 
-if (rainbowSdk.loginError == false) {
+if (rainbowSdk.loginError === true) {
     console.log("Error: C'EST CETTE ERREUR");
 }
 
