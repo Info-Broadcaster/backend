@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
     
     if (!req.body.username || !req.body.password) {
         return res.status(400).json({
-            "error": "Missing username or password"
+            "error": "Missing username or password ! "
         });
     }
     
