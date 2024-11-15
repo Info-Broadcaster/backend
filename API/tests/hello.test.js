@@ -1,10 +1,10 @@
 const request = require('supertest');
-const app = require('../index'); // Adjust the path as necessary
-const { test } = require('node:test');
-const assert = require('assert');
+const app = require('../index');
 
-test('GET /api/hello should return Hello World', async (t) => {
-    const res = await request(app).get('/api/hello');
-    assert.equal(res.status, 200);
-    assert.equal(res.body, 'Hello World');
+describe('GET /api/hello', () => {
+    it('should return Hello World', async () => {
+        const res = await request(app).get('/api/hello');
+        expect(res.status).toBe(200);
+        expect(res.body).toBe('Hello World');
+    });
 });

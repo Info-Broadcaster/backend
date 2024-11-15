@@ -1,0 +1,62 @@
+name: Build and Deploy
+
+on:
+  pull_request:
+    branches:
+      - deploy
+
+jobs:
+  # Re-usable workflow: voir https://docs.github.com/en/actions/sharing-automations/reusing-workflows
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name : Run tests
+        uses: Info-Broadcaster/Backend/.github/workflows/test-validation.yml@main
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t ghcr.io/${{ github.repository }}/broadcaster-backend:${{ github.sha }} .
+        working-directory: ./API
+
+      - name: Save Docker image as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: broadcaster-backend
+          path: |
+            ./API/Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: broadcaster-backend
+
+      - name: Push Docker image
+        run: docker push ghcr.io/${{ github.repository }}/broadcaster-backend:${{ github.sha }}

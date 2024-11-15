@@ -1,0 +1,23 @@
+name: Branch Lint
+
+on: [pull_request]
+
+jobs:
+  branch-name-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Branch name lint
+      run: |
+        BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+        if [[ "$BRANCH_NAME" == "main" ]]; then
+          echo "Branch name is 'main', skipping lint check."
+          exit 0
+        fi
+        if [[ ! "$BRANCH_NAME" =~ ^(feat|fix|tests)/ ]]; then
+          echo "Branch name '$BRANCH_NAME' does not follow the convention 'feat/', 'fix/', or 'tests/'"
+          exit 1
+        fi
