@@ -25,12 +25,16 @@ class RainbowInteraction {
         };
 
         this.rainbowSDK = new RainbowSDK(this.options);
+
         this.isReady = false;
 
-        this.start();
+        this.loginError = false;
+
+        this.start()
     }
 
     start() {
+
         this.rainbowSDK.start();
 
         this.rainbowSDK.events.on("rainbow_onready", () => {
@@ -40,6 +44,10 @@ class RainbowInteraction {
 
         this.rainbowSDK.events.on("rainbow_onerror", (err) => {
             console.error("Rainbow SDK error:", err);
+        });
+
+        this.rainbowSDK.events.on("rainbow_onconnectionerror", (error) => {
+            this.loginError = true;
         });
     }
 
