@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Rainbow = require("../logique/rainbow/rainbowInteraction");
 
-
 router.get('/', async (req, res) => {
     const user = req.user;
 
