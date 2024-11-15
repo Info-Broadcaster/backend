@@ -2,14 +2,13 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 require('dotenv').config();
-//const PORT = 3000;
 const PORT = process.env.PORT || 3000;
 
 const cookieParser = require('cookie-parser');
 const verifyToken = require('./logique/middleware');
 
 app.use(cors({ 
-    origin: "*",
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
     allowedHeaders: 'Content-Type, Authorization', 
     exposedHeaders: 'Authorization', 
