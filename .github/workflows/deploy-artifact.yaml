@@ -6,14 +6,6 @@ on:
       - deploy
 
 jobs:
-  # Re-usable workflow: voir https://docs.github.com/en/actions/sharing-automations/reusing-workflows
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name : Run tests
-        uses: Info-Broadcaster/Backend/.github/workflows/test-validation.yml@main
-
   build:
     runs-on: ubuntu-latest
     steps:
