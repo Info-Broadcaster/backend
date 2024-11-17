@@ -21,11 +21,13 @@ jobs:
         working-directory: ./API
 
       - name: Save Docker image as artifact
+        run: docker save ghcr.io/infobroadcaster/backend:${{ github.sha }} -o backend.tar
+
+      - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4
         with:
           name: backend
-          path: |
-            ./API/Dockerfile
+          path: backend.tar
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,9 +48,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: backend
-    
+
       - name: Load Docker image
-        run: docker load -i backend
+        run: docker load -i backend.tar
 
       - name: Push Docker image
         run: docker push ghcr.io/infobroadcaster/backend:${{ github.sha }}
