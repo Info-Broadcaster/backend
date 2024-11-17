@@ -17,13 +17,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/${{ github.repository }}/broadcaster-backend:${{ github.sha }} .
+        run: docker build -t ghcr.io/infobroadcaster/backend:${{ github.sha }} .
         working-directory: ./API
 
       - name: Save Docker image as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
-          name: broadcaster-backend
+          name: backend
           path: |
             ./API/Dockerfile
 
@@ -43,9 +43,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v2
         with:
-          name: broadcaster-backend
+          name: backend
 
       - name: Push Docker image
-        run: docker push ghcr.io/${{ github.repository }}/broadcaster-backend:${{ github.sha }}
+        run: docker push ghcr.io/infobroadcaster/backend:${{ github.sha }}
