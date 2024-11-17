@@ -46,6 +46,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: backend
+    
+      - name: Load Docker image
+        run: docker load -i backend
 
       - name: Push Docker image
         run: docker push ghcr.io/infobroadcaster/backend:${{ github.sha }}
