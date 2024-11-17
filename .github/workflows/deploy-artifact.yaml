@@ -1,9 +1,6 @@
 name: Build and Deploy
 
-on:
-  pull_request:
-    branches:
-      - deploy
+on: [push]
 
 jobs:
   build:
