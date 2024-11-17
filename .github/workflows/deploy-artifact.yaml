@@ -1,38 +1,16 @@
-name: Build and Deploy
+name: Deploy
 
-on: [push]
+on:
+  workflow_run:
+    workflows: 
+      - Test Validation
+    types:
+      - completed
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build Docker image
-        run: docker build -t ghcr.io/infobroadcaster/backend:${{ github.sha }} .
-        working-directory: ./API
-
-      - name: Save Docker image as artifact
-        run: docker save ghcr.io/infobroadcaster/backend:${{ github.sha }} -o backend.tar
-
-      - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend
-          path: backend.tar
-
   deploy:
     runs-on: ubuntu-latest
-    needs: build
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -44,13 +22,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Docker image artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: backend
-
-      - name: Load Docker image
-        run: docker load -i backend.tar
-
-      - name: Push Docker image
-        run: docker push ghcr.io/infobroadcaster/backend:${{ github.sha }}
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ghcr.io/infobroadcaster/backend:${{ github.sha }} ./API
+          docker push ghcr.io/infobroadcaster/backend:${{ github.sha }}
