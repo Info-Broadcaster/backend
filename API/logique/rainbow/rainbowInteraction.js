@@ -1,7 +1,7 @@
 const RainbowSDK = require('rainbow-node-sdk');
 require('dotenv').config();
 
-class RainbowInteraction {
+class Rainbow {
     constructor(email, password) {
         this.options = {
             rainbow: {
@@ -92,4 +92,4 @@ class RainbowInteraction {
     }
 }
 
-module.exports = RainbowInteraction;
+module.exports = Rainbow;

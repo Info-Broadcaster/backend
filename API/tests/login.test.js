@@ -1,7 +1,7 @@
 const request = require('supertest');
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const RainbowInteraction = require('../logique/rainbow/rainbowInteraction');
+const Rainbow = require('../logique/rainbow/rainbowInteraction');
 const loginRouter = require('../routes/login');
 
 jest.mock('../logique/rainbow/rainbowInteraction');
@@ -12,7 +12,7 @@ app.use('/login', loginRouter);
 
 describe('POST /login', () => {
     beforeEach(() => {
-        RainbowInteraction.mockClear();
+        Rainbow.mockClear();
     });
 
     it('should return 400 if username or password is missing', async () => {
@@ -25,7 +25,7 @@ describe('POST /login', () => {
     });
 
     it('should return 401 if credentials are incorrect', async () => {
-        RainbowInteraction.prototype.testConnection.mockRejectedValue(new Error('Incorrect credentials!'));
+        Rainbow.prototype.testConnection.mockRejectedValue(new Error('Incorrect credentials!'));
 
         const res = await request(app)
             .post('/login')
@@ -40,7 +40,7 @@ describe('POST /login', () => {
     });
 
     it('should return 200 and a token if credentials are correct', async () => {
-        RainbowInteraction.prototype.testConnection.mockResolvedValue('SDK started successfully!');
+        Rainbow.prototype.testConnection.mockResolvedValue('SDK started successfully!');
 
         const res = await request(app)
             .post('/login')

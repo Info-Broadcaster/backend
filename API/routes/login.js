@@ -1,5 +1,5 @@
 const express = require('express');
-const RainbowInteraction = require("../logique/rainbow/rainbowInteraction");
+const Rainbow = require("../logique/rainbow/rainbowInteraction");
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 
@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
         });
     }
 
-    const rainbowSdk = new RainbowInteraction(req.body.username, req.body.password, process.env.APP_ID, process.env.APP_SECRET);
+    const rainbowSdk = new Rainbow(req.body.username, req.body.password, process.env.APP_ID, process.env.APP_SECRET);
 
     try {
         await rainbowSdk.testConnection();
