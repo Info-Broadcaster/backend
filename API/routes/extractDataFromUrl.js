@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
             },
         });
     } else {
-        return res.status(500).send('Error');
+        return res.status(500).json({ error: "Failed to extract data.", details: error.message });
     }
 });
 
