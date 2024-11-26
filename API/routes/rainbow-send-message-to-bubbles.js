@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'bubbleJid and message are required.' });
     }
 
-    const rainbowSdk = new Rainbow(user.username, user.password);
+    const rainbowSdk = new Rainbow(user.username, user.password, process.env.APP_ID, process.env.APP_SECRET);
 
     try {
         await rainbowSdk.sendMessageToBubble(bubbleJid, message);
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
         return res.status(200).json({ success: true, message: 'Message sent successfully.' });
 
     } catch (error) {
-        return res.status(500).json({ error: "Failed to send message to bubble.", details: error.message });
+        return res.status(500).json({ error: error.message });
 
     } finally {
         rainbowSdk.stop(); // Clean up the SDK session
