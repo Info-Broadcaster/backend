@@ -5,7 +5,7 @@ const Rainbow = require("../logique/rainbow/rainbowInteraction");
 router.get('/', async (req, res) => {
     const user = req.user;
 
-    const rainbowSdk = new Rainbow(user.username, user.password);
+    const rainbowSdk = new Rainbow(user.username, user.password, process.env.APP_ID, process.env.APP_SECRET);
 
     try {
         const bubbles = await rainbowSdk.getAllBubbles();

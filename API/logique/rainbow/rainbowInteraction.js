@@ -2,7 +2,7 @@ const RainbowSDK = require('rainbow-node-sdk');
 require('dotenv').config();
 
 class Rainbow {
-    constructor(email, password) {
+    constructor(email, password, appId, appSecret) {
         this.options = {
             rainbow: {
                 host: 'sandbox', // Use "sandbox" or "official" depending on your environment
@@ -12,8 +12,8 @@ class Rainbow {
                 password: password,
             },
             application: {
-                appID: process.env.APP_ID,
-                appSecret: process.env.APP_SECRET,
+                appID: appId,
+                appSecret: appSecret,
             },
             logs: {
                 enableConsoleLogs: false,
