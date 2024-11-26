@@ -61,7 +61,7 @@ class Rainbow {
         try {
             const bubbles = await this.sdk.bubbles.getAllBubbles();
 
-            const formattedBubbles = bubbles.map((bubble) => ({
+            const formattedBubbles = bubbles?.map((bubble) => ({
                 jid: bubble.jid,
                 name: bubble.name,
                 avatar: bubble.avatar,
