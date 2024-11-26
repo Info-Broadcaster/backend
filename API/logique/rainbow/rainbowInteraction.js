@@ -46,6 +46,7 @@ class Rainbow {
     }
 
     async sendMessageToBubble(bubbleJid, message) {
+        await this.testConnection(); // TODO: Check try/catch block
         try {
             const result = await this.sdk.im.sendMessageToBubbleJid(message, bubbleJid);
             console.log('Message sent:', result);
