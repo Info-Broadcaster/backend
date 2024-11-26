@@ -55,6 +55,8 @@ class Rainbow {
     }
 
     async getAllBubbles() {
+        await this.testConnection();
+        
         try {
             const bubbles = await this.sdk.bubbles.getAllBubbles();
 
