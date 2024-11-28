@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { generatePrompt, trad, interactWithIa, whichLanguage } = require('../utils');
+const { generatePrompt, trad, interactWithIa } = require('../utils');
 
 jest.mock('axios');
 
