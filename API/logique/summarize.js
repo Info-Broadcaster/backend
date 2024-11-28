@@ -1,4 +1,5 @@
 const { generatePrompt, interactWithIa, trad, whichLanguage } = require('../utils');
+const findBestTopic = require('./findBestTopic');
 
 /*
 Description:
@@ -72,6 +73,8 @@ async function summarize(websiteContentInText, lang) {
         title = await trad(model, title, lang);
         themes = await trad(model, themes, lang);
     }
+
+    findBestTopic(model, themes);
 
     return {
         summarized,
