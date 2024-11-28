@@ -1,11 +1,11 @@
 const RainbowSDK = require('rainbow-node-sdk');
 require('dotenv').config();
 
-class RainbowInteraction {
+class Rainbow {
     constructor(email, password, appId, appSecret) {
         this.options = {
             rainbow: {
-                host: "sandbox", // Use "sandbox" or "official" depending on your environment
+                host: 'sandbox', // Use "sandbox" or "official" depending on your environment
             },
             credentials: {
                 login: email,
@@ -16,63 +16,52 @@ class RainbowInteraction {
                 appSecret: appSecret,
             },
             logs: {
-                enableConsoleLogs: true,
+                enableConsoleLogs: false,
                 enableFileLogs: false,
             },
             im: {
-                sendReadReceipt: true,
+                sendReadReceipt: false,
             },
         };
-
-        this.rainbowSDK = new RainbowSDK(this.options);
-        this.isReady = false;
-
-        this.start();
+        this.sdk = new RainbowSDK(this.options);
     }
 
-    start() {
-        this.rainbowSDK.start();
+    async testConnection() {
+        return new Promise((resolve, reject) => {
+            this.sdk.events.on('rainbow_onready', () => {
+                console.log('Rainbow SDK is ready!');
+                resolve('SDK started successfully!');
+            });
 
-        this.rainbowSDK.events.on("rainbow_onready", () => {
-            console.log("Rainbow SDK is ready.");
-            this.isReady = true;
-        });
+            this.sdk.events.on('rainbow_onconnectionerror', (error) => {
+                console.error('Error during connection');
+                reject(new Error('Connection failed'));
+            });
 
-        this.rainbowSDK.events.on("rainbow_onerror", (err) => {
-            console.error("Rainbow SDK error:", err);
+            this.sdk.start().catch((error) => {
+                console.error('Error starting Rainbow SDK: ' + error.details);
+                reject(error);
+            });
         });
     }
 
     async sendMessageToBubble(bubbleJid, message) {
-        if (!this.isReady) {
-            console.log("SDK not ready yet, waiting...");
-            // Wait for SDK to be ready
-            await new Promise((resolve) => {
-                this.rainbowSDK.events.once("rainbow_onready", resolve);
-            });
-        }
-
+        await this.testConnection(); // TODO: Check try/catch block
         try {
-            const result = await this.rainbowSDK.im.sendMessageToBubbleJid(message, bubbleJid);
-            console.log("Message sent:", result);
+            const result = await this.sdk.im.sendMessageToBubbleJid(message, bubbleJid);
+            console.log('Message sent:', result);
         } catch (err) {
-            console.error("Error sending message:", err);
+            console.error('Error sending message:', err);
         }
     }
 
     async getAllBubbles() {
-        if (!this.isReady) {
-            console.log("SDK not ready yet, waiting...");
-            // Wait for SDK to be ready
-            await new Promise((resolve) => {
-                this.rainbowSDK.events.once("rainbow_onready", resolve);
-            });
-        }
-
+        await this.testConnection();
+        
         try {
-            const bubbles = await this.rainbowSDK.bubbles.getAllBubbles();
+            const bubbles = await this.sdk.bubbles.getAllBubbles();
 
-            const formattedBubbles = bubbles.map(bubble => ({
+            const formattedBubbles = bubbles?.map((bubble) => ({
                 jid: bubble.jid,
                 name: bubble.name,
                 avatar: bubble.avatar,
@@ -80,15 +69,30 @@ class RainbowInteraction {
             }));
 
             return formattedBubbles;
-
         } catch (err) {
-            console.error("Error sending message:", err);
+            console.error('Error getting bubbles:', err);
         }
     }
 
-    stop() {
-        this.rainbowSDK.stop();
+    async stop() {
+        return new Promise((resolve, reject) => {
+            this.sdk.events.on('rainbow_onstopped', () => {
+                console.log('SDK stopped successfully.');
+                resolve('SDK stopped successfully');
+            });
+
+            this.sdk.events.on('rainbow_onerror', (error) => {
+                console.error('Error during SDK stop:');
+                reject(new Error('Error during SDK stop'));
+            });
+
+            this.sdk.stop()
+                .then(() => {
+                    process.exit(0);
+                })
+                .catch(() => reject("Error while stopping"));
+        });
     }
 }
 
-module.exports = RainbowInteraction;
+module.exports = Rainbow;
