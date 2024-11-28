@@ -1,12 +1,11 @@
 const express = require('express');
-const app = express();
+const http = require('http');
+const { Server } = require('socket.io');
+const bodyParser = require('body-parser');
 const cors = require('cors');
-require('dotenv').config();
-const PORT = process.env.PORT || 3000;
+const jwt = require('jsonwebtoken');
 
-const cookieParser = require('cookie-parser');
-const verifyToken = require('./logique/middleware');
-
+const app = express();
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -15,33 +14,124 @@ app.use(cors({
     credentials: true
 }));
 
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+        methods: ['GET', 'POST'],
+        credentials: true,
+    },
+});
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+const userSessions = require('./userSessions');
 
-const helloRoute = require('./routes/hello');
-app.use('/api/hello', helloRoute);
+const PORT = 3000;
+app.use(bodyParser.json());
 
+//#region Routes
 const login = require("./routes/login");
 app.use("/api/login", login);
+//#endregion Routes
 
-const dialoguewithllama = require('./routes/dialoguewithllama');
-app.use('/api/dialoguewithllama', dialoguewithllama);
+//#region Middleware
 
-const extractDataFromUrl = require('./routes/extractDataFromUrl');
-app.use('/api/extractDataFromUrl', extractDataFromUrl);
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
+    const JWT_SECRET = 'fatih_est_trop_beau';
 
-const rainbowGetBubbles = require('./routes/rainbow-get-bubbles');
-app.use('/api/rainbowGetBubbles', verifyToken, rainbowGetBubbles);
+    if (!token) {
+        return next(new Error('Authentification requise'));
+    }
 
-const rainbowSendMessageToBubbles = require('./routes/rainbow-send-message-to-bubbles');
-app.use('/api/rainbowSendMessageToBubbles', verifyToken, rainbowSendMessageToBubbles);
-
-if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`Server listen on port ${PORT}`);
+    // Vérifier et décoder le jeton
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return next(new Error('Jeton invalide'));
+        }
+        socket.user = decoded; // Ajouter les infos utilisateur au socket
+        next();
     });
-}
+});
 
-module.exports = app;
+//#endregion Middleware
+
+// Gérer les connexions WebSocket
+io.on('connection', (socket) => {
+    console.log(`Client connecté : ${socket.id}`);
+
+    // Vérification du token
+    const token = socket.handshake.auth.token;
+    if (!token) {
+        socket.emit('error', { message: 'Token manquant' });
+        return socket.disconnect();
+    }
+
+    try {
+        const JWT_SECRET = 'fatih_est_trop_beau';
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const username = decoded.username;
+
+        console.log(`Utilisateur connecté a : ${username}`);
+
+        const rainbowInstance = userSessions.get(username);
+        if (!rainbowInstance) {
+            throw new Error('Rainbow SDK non initialisé pour cet utilisateur');
+        }
+
+        console.log(`Rainbow SDK prêt pour l'utilisateur : ${username}`);
+
+
+        socket.on('getBubbles', async () => {
+            try {
+                const bubbles = await rainbowInstance.getBubbles();
+                console.log('Bulles récupérées :', bubbles.length);
+                socket.emit('bubblesList', bubbles);
+            } catch (error) {
+                console.error('Erreur lors de la récupération des bulles :', error);
+                socket.emit('error', { message: 'Erreur lors de la récupération des bulles' });
+            }
+        });
+
+        socket.on('sendMessage', async ({ bubbleJids, message, title, link }) => {
+            if (!Array.isArray(bubbleJids)) {
+                socket.emit('error', { message: 'La liste des bulles doit être un tableau' });
+                return;
+            }
+        
+            try {
+                const results = []; 
+        
+                for (const bubbleJid of bubbleJids) {
+                    try {
+                        console.log(`Envoi du message à la bulle ${bubbleJid}`);
+
+                        const formattedMessage = `${title} \n\n ${message} \n\n ${link}`;
+                        // Envoie le message à chaque bulle
+                        await rainbowInstance.sendMessageToBubble(bubbleJid, formattedMessage);
+                        results.push({ bubbleJid, status: 'success' });
+                    } catch (err) {
+                        console.error(`Erreur lors de l'envoi à la bulle ${bubbleJid} :`, err);
+                        results.push({ bubbleJid, status: 'error', error: err.message });
+                    }
+                }
+        
+                socket.emit('messageSent', { status: 'success' });
+            } catch (error) {
+                console.error('Erreur générale lors de l\'envoi du message :', error);
+                socket.emit('error', { message: 'Erreur générale lors de l\'envoi du message' });
+            }
+        });
+
+        socket.on('disconnect', async () => {
+            console.log(`Client déconnecté : ${socket.id}`);
+        });
+    } catch (error) {
+        console.error('Erreur lors de la connexion WebSocket :', error.message);
+        socket.emit('error', { message: 'Token invalide ou expiré' });
+        socket.disconnect();
+    }
+});
+
+server.listen(PORT, () => {
+    console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
+});
