@@ -13,10 +13,10 @@ router.post('/', async (req, res) => {
     const rainbowSdk = new Rainbow(user.username, user.password, process.env.APP_ID, process.env.APP_SECRET);
 
     try {
-        for (let i = 0; i < bubbles.length; i++) {
-            await rainbowSdk.sendMessageToBubble(bubbles[i], message);
+        for (const bubble of bubbles) {
+            await rainbowSdk.sendMessageToBubble(bubble, message);
+            console.log(`Message sent to bubble ${bubble}`);
         }
-
         return res.status(200).json({ success: true, message: 'Message sent successfully!.' });
     } catch (error) {
         return res.status(500).json({ error: error.message });
