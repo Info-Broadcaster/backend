@@ -3,6 +3,7 @@ const express = require('express');
 const assert = require('assert');
 const Rainbow = require('../logique/rainbow/rainbowInteraction');
 const router = require('../routes/rainbow-send-message-to-bubbles');
+const { title } = require('process');
 
 jest.mock('../logique/rainbow/rainbowInteraction');
 
@@ -24,7 +25,7 @@ describe('Rainbow Send Message to Bubbles API', () => {
 
         const response = await request(app)
             .post('/api/rainbowSendMessageToBubbles')
-            .send({ bubbles: ['bubble1'], message: 'Hello' });
+            .send({ bubbles: ['bubble1'], message: 'Hello', title: 'Article Title', link: 'http://test.infobroadcaster.com' });
 
         assert.strictEqual(response.status, 200);
         assert.deepStrictEqual(response.body, { success: true, message: 'Message sent successfully!.' });
@@ -33,10 +34,10 @@ describe('Rainbow Send Message to Bubbles API', () => {
     it('should return 400 if bubbles or message are missing', async () => {
         const response = await request(app)
             .post('/api/rainbowSendMessageToBubbles')
-            .send({ bubbles: [], message: '' });
+            .send({ bubbles: [], message: '', title: 'Article title', link: 'http://test.infobroadcaster.com' });
 
         assert.strictEqual(response.status, 400);
-        assert.deepStrictEqual(response.body, { error: 'bubbles and message are required.' });
+        assert.deepStrictEqual(response.body, { error: 'bubbles, message, title and link are required.' });
     });
 
     it('should return 500 if there is an error during message sending', async () => {
@@ -45,7 +46,7 @@ describe('Rainbow Send Message to Bubbles API', () => {
 
         const response = await request(app)
             .post('/api/rainbowSendMessageToBubbles')
-            .send({ bubbles: ['bubble1'], message: 'Hello' });
+            .send({ bubbles: ['bubble1'], message: 'Hello', title: 'Article Title', link: 'http://test.infobroadcaster.com' });
 
         assert.strictEqual(response.status, 500);
         assert.deepStrictEqual(response.body, { error: mockError.message });
