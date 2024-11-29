@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const JWT_SECRET = 'fatih_est_trop_beau';
+const JWT_SECRET = process.env.JWT_SECRET || 'fatih_est_trop_beau';
 
 function verifyToken(req, res, next) {
     const token = req.cookies['token']; 

@@ -1,11 +1,12 @@
 const RainbowSDK = require('rainbow-node-sdk');
+require('dotenv').config();
 
 class Rainbow {
-    constructor(email, password, appId, appSecret) {
+    constructor(email, password) {
         this.options = {
             rainbow: { host: 'sandbox' },
             credentials: { login: email, password: password },
-            application: { appID: appId, appSecret: appSecret },
+            application: { appID: process.env.APP_ID, appSecret: process.env.APP_SECRET},
             logs: { enableConsoleLogs: false, enableFileLogs: false },
             im: { sendReadReceipt: false },
         };
@@ -15,7 +16,7 @@ class Rainbow {
     async start() {
         return new Promise((resolve, reject) => {
             this.sdk.events.on('rainbow_onready', () => {
-                console.log('Rainbow SDK prêt pour cet utilisateur');
+                console.log('Rainbow SDK pour ' + this.options.credentials.login + ' prêt !');
                 resolve();
             });
 

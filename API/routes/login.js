@@ -2,12 +2,11 @@ const express = require('express');
 const Rainbow = require('../logique/rainbow/rainbowInteraction');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-//dot env
 require('dotenv').config();
 
-const JWT_SECRET = 'fatih_est_trop_beau';
+const JWT_SECRET = process.env.JWT_SECRET || 'fatih_est_trop_beau';
 
-// Stockage des instances Rainbow par utilisateur
+
 const userSessions = require('../userSessions');
 
 
@@ -19,14 +18,10 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const rainbowInstance = new Rainbow(username, password, process.env.APP_ID, process.env.APP_SECRET);
+        const rainbowInstance = new Rainbow(username, password);
 
         await rainbowInstance.start();
-
-        userSessions.set(username, rainbowInstance);
-        console.log('Sessions actives :', Array.from(userSessions.keys()));
-
-        console.log(`Rainbow SDK initialisé pour l'utilisateur : ${username}`);
+        userSessions.set(username, rainbowInstance); 
 
         const payload = { username };
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
