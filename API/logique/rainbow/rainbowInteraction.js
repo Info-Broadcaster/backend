@@ -20,10 +20,15 @@ class Rainbow {
                 enableFileLogs: false,
             },
             im: {
-                sendReadReceipt: false,
+                sendReadReceipt: true,
             },
         };
         this.sdk = new RainbowSDK(this.options);
+
+        const receipt = this.sdk.events.on("rainbow_onmessagereceiptreadreceived", (event) => {
+            console.log("Someone viewed...");
+            console.log(event);
+        });
     }
 
     async testConnection() {
@@ -50,9 +55,12 @@ class Rainbow {
         try {
             const result = await this.sdk.im.sendMessageToBubbleJid(message, bubbleJid);
             console.log('Message sent:', result);
+
         } catch (err) {
             console.error('Error sending message:', err);
         }
+
+        await this.stop()
     }
 
     async getAllBubbles() {
