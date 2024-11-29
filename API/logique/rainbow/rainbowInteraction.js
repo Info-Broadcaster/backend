@@ -23,11 +23,20 @@ class Rainbow {
                 sendReadReceipt: true,
             },
         };
+
+        this.dict = {};
+
         this.sdk = new RainbowSDK(this.options);
 
         const receipt = this.sdk.events.on("rainbow_onmessagereceiptreadreceived", (event) => {
             console.log("Someone viewed...");
             console.log(event);
+
+            if (this.dict[event.id] > 0) {
+                dict[event.id] = 1;
+            } else {
+                dict[event.id] += 1;
+            }
         });
     }
 
