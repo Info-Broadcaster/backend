@@ -58,7 +58,7 @@ async function summarize(websiteContentInText, lang) {
 
     let themes = await interactWithIa(
         generatePrompt(
-            model,
+            model,  
             'Extract up only to three most important keywords. ' +
                 'Respond only with the keywords, separated by commas.' +
                 ' If fewer than three keywords are identified, provide only the ones found.' +
@@ -67,16 +67,27 @@ async function summarize(websiteContentInText, lang) {
         )
     );
 
+    let hookphrase = await interactWithIa(
+        generatePrompt(
+            model,
+            'Generate a hook phrase that would be appropriate to introduce the article. ' +
+                'Respond only with the hook phrase and provide no explanation or additional comments.',
+            websiteContentInText
+        )
+    );
+
     if (usedLanguage !== lang) {
         summarized = await trad(model, summarized, lang);
         title = await trad(model, title, lang);
         themes = await trad(model, themes, lang);
+        hookphrase = await trad(model, hookphrase, lang);
     }
 
     return {
         summarized,
         title,
         themes,
+        hookphrase,
     };
 }
 
