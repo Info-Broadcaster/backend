@@ -36,6 +36,9 @@ async function summarize(websiteContentInText, lang) {
     );
 
     let summarized = await interactWithIa(prompt);
+    if(summarized === null){
+        return null;
+    }
 
     let usedLanguage;
     switch (await whichLanguage(model, summarized)) {

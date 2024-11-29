@@ -5,6 +5,7 @@ const { Server } = require('socket.io');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'fatih_est_trop_beau';
@@ -22,6 +23,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 //#endregion App Configuration
 
 //#region Server Configuration

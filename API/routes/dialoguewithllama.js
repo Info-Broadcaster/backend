@@ -43,7 +43,7 @@ router.post('/summarize', async (req, res) => {
             },
         });
     } else {
-        return res.status(500).send('Error');
+        return res.status(500).send('Une erreur est survenue, le serveur IA pourrait être hors service');
     }
 });
 

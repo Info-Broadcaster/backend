@@ -20,9 +20,14 @@ function generatePrompt(model, systemContent, userContent) {
 }
 
 async function interactWithIa(prompt) {
-    const result = await axios.post(process.env.MODEL_URL, prompt);
-
-    return result.data.message.content;
+    try{
+        const result = await axios.post(process.env.MODEL_URL, prompt);
+        return result.data.message.content;
+    }
+    catch(e){
+        console.log("Le serveur IA n'est pas disponible");
+        return null
+    }
 }
 
 async function whichLanguage(model, text) {
