@@ -1,5 +1,5 @@
 const { generatePrompt, interactWithIa, trad, whichLanguage } = require('../utils');
-const findBestTopic = require('./findBestTopic');
+const Rainbow = require('./rainbow/rainbowInteraction');
 
 /*
 Description:
@@ -57,13 +57,27 @@ async function summarize(websiteContentInText, lang) {
         )
     );
 
+    // Supprimer ce code en prod, puisque une instance existe déjà.
+    // Ici c'est juste pour ne pas passer par le front.
+    new Rainbow(
+        'lhotz@cfai-formation.fr',
+        'Azertyuiop67!',
+        '255f2b9080fd11efa6661b0bb9c90370',
+        'Tiw4OORLjL0WTjYbmym6Z2o9p0AuPakNGQUM6bAnRyyJQ7muBz27wmBcxVxWuTix'
+    );
+
+    const rainbow = Rainbow.instance;
+    const bubbles = await rainbow.getAllBubbles();
+    const onlyTopicOfBubbles = bubbles.map((bubble) => bubble.topic.trim());
+    let onlyTopisOfBubblesInEnglish = await trad(model, onlyTopicOfBubbles.join(','), 'English');
+    onlyTopisOfBubblesInEnglish = onlyTopisOfBubblesInEnglish.replaceAll('\n', '');
+
     let themes = await interactWithIa(
         generatePrompt(
             model,
-            'Extract up only to three most important keywords. ' +
-                'Respond only with the keywords, separated by commas.' +
-                ' If fewer than three keywords are identified, provide only the ones found.' +
-                ' Do not provide any explanation or additional comments.',
+            'From the following list, extract up to three keywords that exactly match the entries provided: ' +
+                onlyTopisOfBubblesInEnglish +
+                '. Only respond with keywords that match exactly from this list, separated by commas. If no exact matches are found, return nothing. Do not return any keywords that are not an exact match from the provided list. No explanations or additional comments are required.',
             websiteContentInText
         )
     );
@@ -73,8 +87,6 @@ async function summarize(websiteContentInText, lang) {
         title = await trad(model, title, lang);
         themes = await trad(model, themes, lang);
     }
-
-    findBestTopic(model, themes);
 
     return {
         summarized,
