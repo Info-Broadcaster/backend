@@ -27,6 +27,15 @@ function verifyToken(req, res, next) {
         }
 
         req.user = decoded;
+
+        const userSessions = require('../userSessions');
+
+        console.log('sessions', userSessions);
+
+        const rainbowInstance = userSessions.get(decoded.username);
+
+        req.user.rainbowInstance = rainbowInstance;
+
         next();
     });
 }
