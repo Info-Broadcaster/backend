@@ -10,7 +10,7 @@ async function extractDataFromUrl(url, xpath) {
         height: 1000,
     });
 
-    page.setDefaultTimeout(300000);
+    page.setDefaultTimeout(300000); // 5 minutes
 
     await page.goto(url, { waitUntil: 'networkidle0' });
 
