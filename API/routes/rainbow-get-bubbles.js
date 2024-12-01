@@ -9,11 +9,7 @@ router.get('/', async (req, res) => {
 
     try {
         const bubbles = await rainbowSdk.getAllBubbles();
-
-        console.log("Bubbles found ", bubbles);
-
         return res.status(200).json(bubbles);
-
     } catch (error) {
         return res.status(400).json({ error: error.message });
     }
