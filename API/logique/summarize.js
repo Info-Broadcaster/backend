@@ -66,12 +66,12 @@ async function summarize(websiteContentInText, lang) {
 
     // Supprimer ce code en prod, puisque une instance existe déjà.
     // Ici c'est juste pour ne pas passer par le front.
-    new Rainbow(
-        "lhotz@cfai-formation.fr",
-        "Azertyuiop67!",
-        "255f2b9080fd11efa6661b0bb9c90370",
-        "Tiw4OORLjL0WTjYbmym6Z2o9p0AuPakNGQUM6bAnRyyJQ7muBz27wmBcxVxWuTix"
-    );
+    // new Rainbow(
+    //     "lhotz@cfai-formation.fr",
+    //     "Azertyuiop67!",
+    //     "255f2b9080fd11efa6661b0bb9c90370",
+    //     "Tiw4OORLjL0WTjYbmym6Z2o9p0AuPakNGQUM6bAnRyyJQ7muBz27wmBcxVxWuTix"
+    // );
 
     const rainbow = Rainbow.instance;
     const bubbles = await rainbow.getAllBubbles();
@@ -80,9 +80,20 @@ async function summarize(websiteContentInText, lang) {
     let themes = await interactWithIa(
         generatePrompt(
             model,
-            "From the following text, identify the most relevant theme, strictly limited to the provided list: [" +
+            "Extract up only to three most important keywords. " +
+                "Respond only with the keywords, separated by commas." +
+                " If fewer than three keywords are identified, provide only the ones found." +
+                " Do not provide any explanation or additional comments.",
+            websiteContentInText
+        )
+    );
+
+    let suggestThemeFromTopicsInBubbles = await interactWithIa(
+        generatePrompt(
+            model,
+            "From the following text, identify the most relevant themes, strictly limited to the provided list: [" +
                 onlyTopicOfBubbles +
-                "]. Only return theme that are clearly and explicitly discussed in the text. Avoid any vague or loosely related matches. If none of the themes from the list are present in the text, return nothing. Respond only with the theme that match. Do not invent or approximate any themes.",
+                "]. Only return 3 themes separated by commas that are clearly and explicitly discussed in the text. Avoid any vague or loosely related matches. If none of the themes from the list are present in the text, return nothing. Respond only with the themes that match. Do not invent or approximate any themes.",
             websiteContentCleaned
         )
     );
@@ -98,11 +109,13 @@ async function summarize(websiteContentInText, lang) {
     summarized = clean(summarized);
     title = clean(title);
     themes = clean(themes);
+    suggestThemeFromTopicsInBubbles = clean(suggestThemeFromTopicsInBubbles);
 
     return {
         summarized,
         title,
         themes,
+        suggestThemeFromTopicsInBubbles,
     };
 }
 

@@ -40,6 +40,7 @@ router.post('/summarize', async (req, res) => {
                 summarized: dataAfterIA.summarized,
                 title: dataAfterIA.title,
                 themes: dataAfterIA.themes.split(',').map((theme) => theme.trim()),
+                suggestThemeFromTopicsInBubbles: [dataAfterIA.suggestThemeFromTopicsInBubbles],
             },
         });
     } else {
