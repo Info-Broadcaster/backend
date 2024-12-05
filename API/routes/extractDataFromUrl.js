@@ -28,6 +28,7 @@ router.post('/', async (req, res) => {
                 summarized: dataAfterIA.summarized,
                 title: dataAfterIA.title,
                 themes: dataAfterIA.themes,
+                suggestThemeFromTopicsInBubbles: dataAfterIA.suggestThemeFromTopicsInBubbles,
             },
         });
     } else {
