@@ -2,53 +2,53 @@ const request = require('supertest');
 const express = require('express');
 const assert = require('assert');
 const Rainbow = require('../logique/rainbow/rainbowInteraction');
-const router = require('../routes/rainbow-send-message-to-bubbles');
-const { title } = require('process');
+const router = require('../routes/rainbow-get-bubbles');
 
 jest.mock('../logique/rainbow/rainbowInteraction');
 
 const app = express();
 app.use(express.json());
+
+// Create a mock Rainbow instance
+const mockRainbowInstance = {
+    getAllBubbles: jest.fn()
+};
+
+// Update middleware to include rainbowInstance
 app.use((req, res, next) => {
-    req.user = { username: 'testuser', password: 'testpass' };
+    req.user = { 
+        username: 'testuser', 
+        password: 'testpass',
+        rainbowInstance: mockRainbowInstance
+    };
     next();
 });
-app.use('/api/rainbowSendMessageToBubbles', router);
 
-describe('Rainbow Send Message to Bubbles API', () => {
+app.use('/api/rainbowGetBubbles', router);
+
+describe('Rainbow Get Bubbles API', () => {
     beforeEach(() => {
-        Rainbow.mockClear();
+        jest.clearAllMocks();
+        mockRainbowInstance.getAllBubbles.mockReset();
     });
 
-    it('should send message successfully', async () => {
-        Rainbow.prototype.sendMessageToBubble.mockResolvedValue();
+    it('should return bubbles on success', async () => {
+        const mockBubbles = [{ id: 1, name: 'Bubble1' }, { id: 2, name: 'Bubble2' }];
+        mockRainbowInstance.getAllBubbles.mockResolvedValue(mockBubbles);
 
-        const response = await request(app)
-            .post('/api/rainbowSendMessageToBubbles')
-            .send({ bubbles: ['bubble1'], message: 'Hello', title: 'Article Title', link: 'http://test.infobroadcaster.com' });
+        const response = await request(app).get('/api/rainbowGetBubbles');
 
         assert.strictEqual(response.status, 200);
-        assert.deepStrictEqual(response.body, { success: true, message: 'Message sent successfully!.' });
+        assert.deepStrictEqual(response.body, mockBubbles);
     });
 
-    it('should return 400 if bubbles or message are missing', async () => {
-        const response = await request(app)
-            .post('/api/rainbowSendMessageToBubbles')
-            .send({ bubbles: [], message: '', title: 'Article title', link: 'http://test.infobroadcaster.com' });
+    it('should return an error on failure', async () => {
+        const mockError = new Error('Failed to get bubbles');
+        mockRainbowInstance.getAllBubbles.mockRejectedValue(mockError);
+
+        const response = await request(app).get('/api/rainbowGetBubbles');
 
         assert.strictEqual(response.status, 400);
-        assert.deepStrictEqual(response.body, { error: 'bubbles, message, title and link are required.' });
-    });
-
-    it('should return 500 if there is an error during message sending', async () => {
-        const mockError = new Error('Failed to send message');
-        Rainbow.prototype.sendMessageToBubble.mockRejectedValue(mockError);
-
-        const response = await request(app)
-            .post('/api/rainbowSendMessageToBubbles')
-            .send({ bubbles: ['bubble1'], message: 'Hello', title: 'Article Title', link: 'http://test.infobroadcaster.com' });
-
-        assert.strictEqual(response.status, 500);
         assert.deepStrictEqual(response.body, { error: mockError.message });
     });
 });
