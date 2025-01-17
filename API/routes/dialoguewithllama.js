@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const extractDataFromUrl = require('../logique/extractDataFromUrl');
-const sumamarize = require('../logique/summarize');
+const summarize = require('../logique/summarize');
 
 /*
 Description:
@@ -32,7 +32,7 @@ router.post('/summarize', async (req, res) => {
 
     const extractedDataFromUrl = await extractDataFromUrl(req.body.url, req.body.xpath);
 
-    const dataAfterIA = await sumamarize(extractedDataFromUrl, req.body.lang);
+    const dataAfterIA = await summarize(extractedDataFromUrl, req.body.lang);
 
     if (dataAfterIA) {
         return res.status(200).json({
@@ -40,6 +40,8 @@ router.post('/summarize', async (req, res) => {
                 summarized: dataAfterIA.summarized,
                 title: dataAfterIA.title,
                 themes: dataAfterIA.themes.split(',').map((theme) => theme.trim()),
+                suggestThemeFromTopicsInBubbles: [dataAfterIA.suggestThemeFromTopicsInBubbles],
+                hookphrase: dataAfterIA.hookphrase,
             },
         });
     } else {
@@ -55,7 +57,7 @@ router.post('/summarize/text', async (req, res) => {
     //     return res.status(400).json("Invalid URL or URL is not reachable");
     // }
 
-    const dataAfterIA = await sumamarize(req.body.text, req.body.lang);
+    const dataAfterIA = await summarize(req.body.text, req.body.lang);
 
     if (dataAfterIA) {
         return res.status(200).json({
@@ -63,6 +65,8 @@ router.post('/summarize/text', async (req, res) => {
                 summarized: dataAfterIA.summarized,
                 title: dataAfterIA.title,
                 themes: dataAfterIA.themes.split(',').map((theme) => theme.trim()),
+                hookphrase: dataAfterIA.hookphrase,
+                suggestThemeFromTopicsInBubbles: [dataAfterIA.suggestThemeFromTopicsInBubbles],
             },
         });
     } else {

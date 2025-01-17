@@ -12,7 +12,7 @@ describe('Utils Tests', () => {
             const expectedPrompt = {
                 model: model,
                 messages: [
-                    { role: 'system', content: systemContent },
+                    { role: 'system', content: "Forget everything I've told you before and take this new context into account: " + systemContent },
                     { role: 'user', content: userContent },
                 ],
                 stream: false,

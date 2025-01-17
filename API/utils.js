@@ -7,7 +7,8 @@ function generatePrompt(model, systemContent, userContent) {
         messages: [
             {
                 role: 'system',
-                content: systemContent,
+                content:
+                    "Forget everything I've told you before and take this new context into account: " + systemContent,
             },
             {
                 role: 'user',
@@ -46,4 +47,8 @@ async function trad(model, text, lang) {
     );
 }
 
-module.exports = { generatePrompt, trad, interactWithIa, whichLanguage };
+function clean(text) {
+    return text.trim().replaceAll("\n", "");
+}
+
+module.exports = { generatePrompt, trad, interactWithIa, whichLanguage, clean };

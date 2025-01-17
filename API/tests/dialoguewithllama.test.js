@@ -29,9 +29,11 @@ describe('POST /api/dialoguewithllama/summarize', () => {
 
     it('should return 200 if URL and LANG are provided', async () => {
         summarize.mockResolvedValue({
+            suggestThemeFromTopicsInBubbles: 'This is a theme',
             summarized: 'This is a summary',
             title: 'This is a title',
             themes: 'theme1, theme2',
+            hookphrase: 'This is a hookphrase',
         });
 
         extractDataFromUrl.mockResolvedValue('This is the extracted data');
@@ -44,9 +46,11 @@ describe('POST /api/dialoguewithllama/summarize', () => {
         assert.strictEqual(res.status, 200);
         assert.deepStrictEqual(res.body, {
             data: {
+                suggestThemeFromTopicsInBubbles: ['This is a theme'],
                 summarized: 'This is a summary',
                 title: 'This is a title',
                 themes: ['theme1', 'theme2'],
+                hookphrase: 'This is a hookphrase',
             },
         });
     });
