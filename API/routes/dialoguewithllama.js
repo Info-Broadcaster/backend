@@ -1,7 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const extractDataFromUrl = require('../logique/extractDataFromUrl');
-const summarize = require('../logique/summarize');
+const extractDataFromUrl = require("../logique/extractDataFromUrl");
+const summarize = require("../logique/summarize");
 
 /*
 Description:
@@ -14,13 +14,13 @@ L'url de l'article qu'on souhaite résumer.
 Retour:
 Retourne un JSON avec l'article résumé dans la ppt data
  */
-router.post('/summarize', async (req, res) => {
+router.post("/summarize", async (req, res) => {
     if (!req.body.url) {
-        return res.status(400).send('URL is required');
+        return res.status(400).send("URL is required");
     }
 
     if (!req.body.lang) {
-        return res.status(400).send('LANG is required');
+        return res.status(400).send("LANG is required");
     }
 
     // vérifier lang qu'il soit bien FR, EN, IT ...
@@ -39,17 +39,20 @@ router.post('/summarize', async (req, res) => {
             data: {
                 summarized: dataAfterIA.summarized,
                 title: dataAfterIA.title,
-                themes: dataAfterIA.themes.split(',').map((theme) => theme.trim()),
-                suggestThemeFromTopicsInBubbles: [dataAfterIA.suggestThemeFromTopicsInBubbles],
+                themes: dataAfterIA.themes.split(",").map((theme) => theme.trim()),
+                suggestThemeFromTopicsInBubbles: dataAfterIA.suggestThemeFromTopicsInBubbles
+                    .trim()
+                    .split(",")
+                    .map((theme) => theme.trim()),
                 hookphrase: dataAfterIA.hookphrase,
             },
         });
     } else {
-        return res.status(500).send('Error');
+        return res.status(500).send("Error");
     }
 });
 
-router.post('/summarize/text', async (req, res) => {
+router.post("/summarize/text", async (req, res) => {
     // vérifier lang qu'il soit bien FR, EN, IT ...
 
     // const isValideUrl = isValidUrl(req.body.url);
@@ -64,13 +67,13 @@ router.post('/summarize/text', async (req, res) => {
             data: {
                 summarized: dataAfterIA.summarized,
                 title: dataAfterIA.title,
-                themes: dataAfterIA.themes.split(',').map((theme) => theme.trim()),
+                themes: dataAfterIA.themes.split(",").map((theme) => theme.trim()),
                 hookphrase: dataAfterIA.hookphrase,
                 suggestThemeFromTopicsInBubbles: [dataAfterIA.suggestThemeFromTopicsInBubbles],
             },
         });
     } else {
-        return res.status(500).send('Error');
+        return res.status(500).send("Error");
     }
 });
 
