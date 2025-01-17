@@ -2,6 +2,7 @@ const express = require('express');
 const Rainbow = require("../logique/rainbow/rainbowInteraction");
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const userSessions = require('../userSessions');
 
 const JWT_SECRET = 'fatih_est_trop_beau';
 
@@ -21,6 +22,8 @@ router.post("/", async (req, res) => {
             "error": "Incorrect credentials!"
         });
     }
+
+    userSessions.set(req.body.username, rainbowSdk);
 
     const payload = {
         username: req.body.username,
