@@ -2,6 +2,8 @@ const RainbowSDK = require('rainbow-node-sdk');
 require('dotenv').config();
 
 class Rainbow {
+    static instance = null;
+
     constructor(email, password, appId, appSecret) {
         this.options = {
             rainbow: {
@@ -23,7 +25,14 @@ class Rainbow {
                 sendReadReceipt: false,
             },
         };
+
         this.sdk = new RainbowSDK(this.options);
+
+        // Attention pas encore un vrai singleton pour l'instant!
+        if(Rainbow.instance == null) {
+            Rainbow.instance = this;
+        }
+
     }
 
     async testConnection() {
@@ -56,8 +65,12 @@ class Rainbow {
     }
 
     async getAllBubbles() {
-        await this.testConnection();
-        
+        try {
+            await this.testConnection();
+        } catch (e) {
+            console.log('erreorrrr');
+        }
+
         try {
             const bubbles = await this.sdk.bubbles.getAllBubbles();
 
@@ -86,11 +99,12 @@ class Rainbow {
                 reject(new Error('Error during SDK stop'));
             });
 
-            this.sdk.stop()
+            this.sdk
+                .stop()
                 .then(() => {
                     process.exit(0);
                 })
-                .catch(() => reject("Error while stopping"));
+                .catch(() => reject('Error while stopping'));
         });
     }
 }
