@@ -34,6 +34,11 @@ function verifyToken(req, res, next) {
 
         const rainbowInstance = userSessions.get(decoded.username);
 
+        if (!rainbowInstance) {
+            console.log("Pas d'instance rainbow. Deconnexion de l'utilisateur");
+            return res.status(403).json({ error: "Votre session rainbow a expiré, veuillez vous reconnecter." });
+        }
+
         req.user.rainbowInstance = rainbowInstance;
 
         next();
