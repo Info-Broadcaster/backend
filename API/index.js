@@ -7,6 +7,10 @@ const PORT = process.env.PORT || 3000;
 const cookieParser = require('cookie-parser');
 const verifyToken = require('./logique/middleware');
 
+const { getTrackerDataFromLinkly } = require('./logique/link-tracker');
+
+getTrackerDataFromLinkly()
+
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -25,6 +29,9 @@ app.use('/api/hello', helloRoute);
 
 const login = require("./routes/login");
 app.use("/api/login", login);
+
+const getStatistics = require("./routes/get-statistics");
+app.use("/api/getStatistics", getStatistics);
 
 const dialoguewithllama = require('./routes/dialoguewithllama');
 app.use('/api/dialoguewithllama', dialoguewithllama);
