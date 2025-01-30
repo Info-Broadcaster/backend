@@ -20,50 +20,40 @@ async function getLinkTracker(target_link) {
         body: JSON.stringify(data),
     };
 
-    return fetch(completeUrl, requestOptions)
-        .then((response) => response.json())
-        .then((json) => {
-            return json.full_url;
-        })
-        .catch((error) => {
-            // console.error('Error:', error);
-            throw error;
-        });
+    try {
+        const response = await fetch(completeUrl, requestOptions);
+        const json = await response.json();
+        return json.full_url;
+    } catch (error) {
+        throw error;
+    }
 }
 
-function getTrackerDataFromLinkly() {
-    return new Promise((resolve, reject) => {
-        const apiUrl = `https://app.linklyhq.com/api/v1/workspace/${process.env.WORKSPACE_ID}/list_links`;
-        const apiKey = process.env.LINKLY_API_KEY;
-        const completeUrl = `${apiUrl}?api_key=${apiKey}`;
+async function getTrackerDataFromLinkly() {
+    const apiUrl = `https://app.linklyhq.com/api/v1/workspace/${process.env.WORKSPACE_ID}/list_links`;
+    const apiKey = process.env.LINKLY_API_KEY;
+    const completeUrl = `${apiUrl}?api_key=${apiKey}`;
 
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
 
-        return fetch(completeUrl, requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                const simplifiedLinks = data.links.map((link) => ({
-                    id: link.id,
-                    clicks_total: link.clicks_total,
-                    url: link.url,
-                    full_url: link.full_url,
-                }));
+    try {
+        const response = await fetch(completeUrl, requestOptions);
+        const data = await response.json();
 
-                // console.log('Simplified Links:', simplifiedLinks);
-
-                resolve(simplifiedLinks);
-            })
-            .catch((error) => {
-                // console.error('Error:', error);
-                reject(error);
-                throw error;
-            });
-    });
+        return data.links.map((link) => ({
+            id: link.id,
+            clicks_total: link.clicks_total,
+            url: link.url,
+            full_url: link.full_url,
+        }));
+    } catch (error) {
+        throw error;
+    }
 }
 
 module.exports = { getLinkTracker, getTrackerDataFromLinkly };
