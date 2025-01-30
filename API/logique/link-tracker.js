@@ -1,8 +1,8 @@
-require('dotenv').config();
-var fs = require('fs');
+require("dotenv").config();
+var fs = require("fs");
 
 async function getLinkTracker(target_link) {
-    const apiUrl = 'https://app.linklyhq.com/api/v1/link';
+    const apiUrl = "https://app.linklyhq.com/api/v1/link";
     const apiKey = process.env.LINKLY_API_KEY;
 
     const completeUrl = `${apiUrl}?api_key=${apiKey}`;
@@ -13,9 +13,9 @@ async function getLinkTracker(target_link) {
     };
 
     const requestOptions = {
-        method: 'POST',
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
     };
@@ -26,7 +26,7 @@ async function getLinkTracker(target_link) {
             return json.full_url;
         })
         .catch((error) => {
-            console.error('Error:', error);
+            console.error("Error:", error);
             throw error;
         });
 }
@@ -38,9 +38,9 @@ function getTrackerDataFromLinkly() {
         const completeUrl = `${apiUrl}?api_key=${apiKey}`;
 
         const requestOptions = {
-            method: 'GET',
+            method: "GET",
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
         };
 
@@ -54,12 +54,12 @@ function getTrackerDataFromLinkly() {
                     full_url: link.full_url,
                 }));
 
-                console.log('Simplified Links:', simplifiedLinks);
+                // console.log('Simplified Links:', simplifiedLinks);
 
                 resolve(simplifiedLinks);
             })
             .catch((error) => {
-                console.error('Error:', error);
+                console.error("Error:", error);
                 reject(error);
                 throw error;
             });
