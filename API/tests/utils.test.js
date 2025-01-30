@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { generatePrompt, trad, interactWithIa } = require('../utils');
+const { generatePrompt, trad, interactWithIa, whichLanguage, clean } = require('../utils');
 
 jest.mock('axios');
 
@@ -40,6 +40,32 @@ describe('Utils Tests', () => {
 
             await expect(interactWithIa(prompt)).rejects.toThrow('API Error');
         });
+
+        it('should throw an error if MODEL_URL is missing', async () => {
+            delete process.env.MODEL_URL;
+
+            await expect(interactWithIa({ model: 'test-model', messages: [] })).rejects.toThrow();
+        });
+    });
+
+    describe('whichLanguage', () => {
+        it('should identify the correct language', async () => {
+            const model = 'test-model';
+            const text = 'Hello, how are you?';
+            const apiResponse = { data: { message: { content: 'English' } } };
+            axios.post.mockResolvedValue(apiResponse);
+
+            const result = await whichLanguage(model, text);
+            expect(result).toBe('English');
+        });
+
+        it('should handle API errors when identifying language', async () => {
+            const model = 'test-model';
+            const text = 'Hello, how are you?';
+            axios.post.mockRejectedValue(new Error('Language Detection Error'));
+
+            await expect(whichLanguage(model, text)).rejects.toThrow('Language Detection Error');
+        });
     });
 
     describe('trad', () => {
@@ -61,6 +87,23 @@ describe('Utils Tests', () => {
             axios.post.mockRejectedValue(new Error('Translation Error'));
 
             await expect(trad(model, text, lang)).rejects.toThrow('Translation Error');
+        });
+    });
+
+    describe('clean', () => {
+        it('should remove newlines and trim spaces', () => {
+            const input = '  Hello \nWorld  ';
+            const expectedOutput = 'Hello World';
+
+            expect(clean(input)).toBe(expectedOutput);
+        });
+
+        it('should handle an empty string', () => {
+            expect(clean('')).toBe('');
+        });
+
+        it('should handle multiple spaces correctly', () => {
+            expect(clean('   This   is   a   test   ')).toBe('This   is   a   test');
         });
     });
 });
