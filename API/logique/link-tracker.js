@@ -26,7 +26,7 @@ async function getLinkTracker(target_link) {
             return json.full_url;
         })
         .catch((error) => {
-            console.error('Error:', error);
+            // console.error('Error:', error);
             throw error;
         });
 }
@@ -54,12 +54,12 @@ function getTrackerDataFromLinkly() {
                     full_url: link.full_url,
                 }));
 
-                console.log('Simplified Links:', simplifiedLinks);
+                // console.log('Simplified Links:', simplifiedLinks);
 
                 resolve(simplifiedLinks);
             })
             .catch((error) => {
-                console.error('Error:', error);
+                // console.error('Error:', error);
                 reject(error);
                 throw error;
             });
