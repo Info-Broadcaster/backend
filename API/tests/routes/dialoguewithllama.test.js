@@ -66,3 +66,42 @@ describe('POST /api/dialoguewithllama/summarize', () => {
         assert.strictEqual(res.status, 500);
     });
 });
+
+describe('POST /api/dialoguewithllama/summarize/text', () => {
+    it('should return 200 if text and lang are provided', async () => {
+        summarize.mockResolvedValue({
+            suggestThemeFromTopicsInBubbles: 'This is a theme',
+            summarized: 'This is a summary',
+            title: 'This is a title',
+            themes: 'theme1, theme2',
+            hookphrase: 'This is a hookphrase',
+        });
+
+        const res = await request(app)
+            .post('/api/dialoguewithllama/summarize/text')
+            .set('Content-Type', 'application/json')
+            .send({ text: 'This is a text', lang: 'EN' });
+
+        assert.strictEqual(res.status, 200);
+        assert.deepStrictEqual(res.body, {
+            data: {
+                suggestThemeFromTopicsInBubbles: ['This is a theme'],
+                summarized: 'This is a summary',
+                title: 'This is a title',
+                themes: ['theme1', 'theme2'],
+                hookphrase: 'This is a hookphrase',
+            },
+        });
+    });
+
+    it('should return 500 if an error occurred', async () => {
+        summarize.mockResolvedValue(null);
+
+        const res = await request(app)
+            .post('/api/dialoguewithllama/summarize/text')
+            .set('Content-Type', 'application/json')
+            .send({ text: 'This is a text', lang: 'EN' });
+
+        assert.strictEqual(res.status, 500);
+    });
+});
