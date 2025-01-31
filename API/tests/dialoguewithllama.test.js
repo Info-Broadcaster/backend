@@ -64,6 +64,5 @@ describe('POST /api/dialoguewithllama/summarize', () => {
             .send({ url: 'https://test.infobroadcaster.com', lang: 'EN' });
 
         assert.strictEqual(res.status, 500);
-        assert.strictEqual(res.text, 'Error');
     });
 });

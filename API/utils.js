@@ -27,11 +27,12 @@ async function interactWithIa(prompt) {
             return response;
         })
         .catch((error) => {
-            // renvoie une erreur si le modèle n'est pas accessible ou si la requête a échoué
-            throw new Error(
-                "Le serveur IA est actuellement indisponible. Veuillez contacter Fatih pour qu'il l'allume."
-            );
+            throw error;
         });
+
+    if (!result) {
+        throw new Error("Le service IA est actuellement indisponible. Veuillez contacter le GOAT bobylatruffe.");
+    }
 
     return result.data.message.content;
 }

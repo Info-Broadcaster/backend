@@ -32,7 +32,6 @@ class Rainbow {
 
         this.sdk = new RainbowSDK(this.options);
 
-        // Attention pas encore un vrai singleton pour l'instant!
         if (Rainbow.instance == null) {
             Rainbow.instance = this;
         }
@@ -69,7 +68,6 @@ class Rainbow {
     }
 
     async sendMessageToBubble(bubbleJid, message) {
-        // await this.testConnection(); // TODO: Check try/catch block
         try {
             const result = await this.sdk.im.sendMessageToBubbleJid(message, bubbleJid, undefined, {
                 type: "text/markdown",
@@ -82,8 +80,6 @@ class Rainbow {
     }
 
     async getAllBubbles() {
-        // await this.testConnection();
-
         try {
             const bubbles = await this.sdk.bubbles.getAllBubbles();
 
@@ -101,26 +97,23 @@ class Rainbow {
     }
 
     async stop() {
-        return new Promise((resolve, reject) => {
-            this.sdk.events.on("rainbow_onstopped", () => {
-                console.log("SDK stopped successfully.");
-                resolve("SDK stopped successfully");
-            });
-
-            this.sdk.events.on("rainbow_onerror", (error) => {
-                console.error("Error during SDK stop:");
-                reject(new Error("Error during SDK stop"));
-            });
-
-            this.sdk.stop();
-            this.sdk
-                .stop()
-                .then(() => {
-                    process.exit(0);
-                })
-                .catch(() => reject("Error while stopping"));
+    return new Promise((resolve, reject) => {
+        this.sdk.events.on("rainbow_onstopped", () => {
+            console.log("SDK stopped successfully.");
+            resolve("SDK stopped successfully");
         });
-    }
+
+        this.sdk.events.on("rainbow_onerror", (error) => {
+            console.error("Error during SDK stop:");
+            reject(new Error("Error during SDK stop"));
+        });
+
+        this.sdk.stop()
+            .then(() => resolve("SDK stopped successfully"))
+            .catch(() => reject(new Error("Error while stopping")));
+    });
+}
+
 }
 
 module.exports = Rainbow;
