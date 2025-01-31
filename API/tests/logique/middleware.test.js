@@ -1,13 +1,13 @@
 const jwt = require('jsonwebtoken');
-const verifyToken = require('../logique/middleware');
+const verifyToken = require('../../logique/middleware');
 
 jest.mock('jsonwebtoken');
 
-jest.mock('../userSessions', () => ({
+jest.mock('../../userSessions', () => ({
     get: jest.fn()
 }));
 
-const userSessions = require('../userSessions');
+const userSessions = require('../../userSessions');
 
 describe('verifyToken Middleware', () => {
     let req;

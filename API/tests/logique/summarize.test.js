@@ -1,8 +1,8 @@
-const summarize = require('../logique/summarize');
-const { interactWithIa, trad, whichLanguage, clean } = require("../utils");
-const Rainbow = require("../logique/rainbow/rainbowInteraction");
+const summarize = require('../../logique/summarize');
+const { interactWithIa, trad, whichLanguage, clean } = require("../../utils");
+const Rainbow = require("../../logique/rainbow/rainbowInteraction");
 
-jest.mock('../utils', () => ({
+jest.mock('../../utils', () => ({
     generatePrompt: jest.fn((model, prompt, text) => `${prompt} ${text}`),
     interactWithIa: jest.fn(),
     trad: jest.fn(),
@@ -10,7 +10,7 @@ jest.mock('../utils', () => ({
     clean: jest.fn(text => text)
 }));
 
-jest.mock('../logique/rainbow/rainbowInteraction', () => ({
+jest.mock('../../logique/rainbow/rainbowInteraction', () => ({
     instance: {
         getAllBubbles: jest.fn()
     }

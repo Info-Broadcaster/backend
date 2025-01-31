@@ -1,12 +1,12 @@
 const request = require('supertest');
-const app = require('../index');
+const app = require('../../index');
 const assert = require('assert');
 
-jest.mock('../logique/summarize');
-jest.mock('../logique/extractDataFromUrl');
+jest.mock('../../logique/summarize');
+jest.mock('../../logique/extractDataFromUrl');
 
-const summarize = require('../logique/summarize');
-const extractDataFromUrl = require('../logique/extractDataFromUrl');
+const summarize = require('../../logique/summarize');
+const extractDataFromUrl = require('../../logique/extractDataFromUrl');
 
 describe('POST /api/dialoguewithllama/summarize', () => {
     it('should return 400 if URL is missing', async () => {

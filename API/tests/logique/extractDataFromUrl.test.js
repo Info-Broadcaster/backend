@@ -1,4 +1,4 @@
-const extractDataFromUrl = require('../logique/extractDataFromUrl');
+const extractDataFromUrl = require('../../logique/extractDataFromUrl');
 const puppeteer = require('puppeteer');
 const { Readability } = require('@mozilla/readability');
 const { JSDOM } = require('jsdom');

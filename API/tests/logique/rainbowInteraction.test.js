@@ -1,5 +1,6 @@
 const RainbowSDK = require("rainbow-node-sdk");
-const Rainbow = require("../logique/rainbow/rainbowInteraction");
+const Rainbow = require("../../logique/rainbow/rainbowInteraction");
+
 jest.mock("rainbow-node-sdk");
 global.console = {
     log: jest.fn(),

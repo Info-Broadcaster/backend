@@ -1,4 +1,4 @@
-const { getLinkTracker, getTrackerDataFromLinkly } = require('../logique/link-tracker');
+const { getLinkTracker, getTrackerDataFromLinkly } = require('../../logique/link-tracker');
 
 global.fetch = jest.fn();
 
