@@ -136,5 +136,40 @@ describe("Rainbow SDK Wrapper", () => {
             },
         });
     });
-    
+
+    it("should handle connection error during testConnection", async () => {
+        mockSdk.events.on.mockImplementationOnce((event, callback) => {
+            if (event === "rainbow_onconnectionerror") {
+                setTimeout(() => callback(new Error("Connection error")), 10);
+            }
+        });
+        await expect(rainbowInstance.testConnection()).rejects.toThrow("Connection failed");
+    });
+
+    it("should handle multiple stop event callbacks", async () => {
+        let stopCallback;
+        mockSdk.events.on.mockImplementation((event, callback) => {
+            if (event === "rainbow_onstopped") {
+                stopCallback = callback;
+            }
+        });
+
+        const stopPromise = rainbowInstance.stop();
+        stopCallback();
+        stopCallback();
+        await expect(stopPromise).resolves.toBe("SDK stopped successfully");
+    });
+
+    it("should handle error event during stop", async () => {
+        let errorCallback;
+        mockSdk.events.on.mockImplementation((event, callback) => {
+            if (event === "rainbow_onerror") {
+                errorCallback = callback;
+            }
+        });
+
+        const stopPromise = rainbowInstance.stop();
+        errorCallback(new Error("Stop error"));
+        await expect(stopPromise).rejects.toThrow("Error during SDK stop");
+    });
 });
