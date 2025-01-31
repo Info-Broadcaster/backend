@@ -1,7 +1,6 @@
 const RainbowSDK = require("rainbow-node-sdk");
-const Rainbow = require("../logique/rainbow/rainbowInteraction"); // Import the class
+const Rainbow = require("../logique/rainbow/rainbowInteraction");
 jest.mock("rainbow-node-sdk");
-
 global.console = {
     log: jest.fn(),
     error: jest.fn(),
@@ -12,7 +11,6 @@ describe("Rainbow SDK Wrapper", () => {
     let mockSdk;
 
     beforeEach(() => {
-        // Mock SDK behavior
         RainbowSDK.mockImplementation(() => ({
             start: jest.fn().mockResolvedValue("Started"),
             stop: jest.fn().mockResolvedValue("Stopped"),
@@ -21,6 +19,9 @@ describe("Rainbow SDK Wrapper", () => {
                     if (event === "rainbow_onready") setTimeout(() => callback(), 10);
                     if (event === "rainbow_onconnectionerror") setTimeout(() => callback(new Error("Connection error")), 10);
                     if (event === "rainbow_onstopped") setTimeout(() => callback(), 10);
+                    if (event === "rainbow_onmessagereceiptreadreceived") setTimeout(() => callback({
+                        id: 'testMessageId'
+                    }), 10);
                 }),
             },
             im: {
@@ -33,7 +34,7 @@ describe("Rainbow SDK Wrapper", () => {
             },
         }));
 
-        // Initialize the class (Mocking real connection)
+        Rainbow.instance = null;
         rainbowInstance = new Rainbow("test@example.com", "password", "appId", "appSecret");
         mockSdk = rainbowInstance.sdk;
     });
@@ -98,4 +99,42 @@ describe("Rainbow SDK Wrapper", () => {
         mockSdk.stop.mockRejectedValueOnce(new Error("Stop failed"));
         await expect(rainbowInstance.stop()).rejects.toThrow("Error while stopping");
     });
+
+    it("should handle message receipt event", () => {
+        const eventHandler = mockSdk.events.on.mock.calls.find(
+            call => call[0] === "rainbow_onmessagereceiptreadreceived"
+        )[1];
+
+        expect(() => eventHandler({ id: 'testMessageId' })).not.toThrow();
+    });
+
+    it("should handle null bubbles in getAllBubbles", async () => {
+        mockSdk.bubbles.getAllBubbles.mockResolvedValueOnce(null);
+        const result = await rainbowInstance.getAllBubbles();
+        expect(result).toBeUndefined();
+    });
+
+    it("should create options with correct configuration", () => {
+        expect(rainbowInstance.options).toEqual({
+            rainbow: {
+                host: "sandbox",
+            },
+            credentials: {
+                login: "test@example.com",
+                password: "password",
+            },
+            application: {
+                appID: "appId",
+                appSecret: "appSecret",
+            },
+            logs: {
+                enableConsoleLogs: false,
+                enableFileLogs: false,
+            },
+            im: {
+                sendReadReceipt: true,
+            },
+        });
+    });
+    
 });

@@ -3,9 +3,7 @@ require("dotenv").config();
 
 class Rainbow {
     static instance = null;
-
-    static instance = null;
-
+    
     constructor(email, password, appId, appSecret) {
         this.options = {
             rainbow: {
@@ -41,9 +39,9 @@ class Rainbow {
             console.log(event);
 
             if (this.dict[event.id] > 0) {
-                dict[event.id] = 1;
+                this.dict[event.id] = 1;
             } else {
-                dict[event.id] += 1;
+                this.dict[event.id] += 1;
             }
         });
     }
@@ -97,22 +95,22 @@ class Rainbow {
     }
 
     async stop() {
-    return new Promise((resolve, reject) => {
-        this.sdk.events.on("rainbow_onstopped", () => {
-            console.log("SDK stopped successfully.");
-            resolve("SDK stopped successfully");
-        });
+        return new Promise((resolve, reject) => {
+            this.sdk.events.on("rainbow_onstopped", () => {
+                console.log("SDK stopped successfully.");
+                resolve("SDK stopped successfully");
+            });
 
-        this.sdk.events.on("rainbow_onerror", (error) => {
-            console.error("Error during SDK stop:");
-            reject(new Error("Error during SDK stop"));
-        });
+            this.sdk.events.on("rainbow_onerror", (error) => {
+                console.error("Error during SDK stop:");
+                reject(new Error("Error during SDK stop"));
+            });
 
-        this.sdk.stop()
-            .then(() => resolve("SDK stopped successfully"))
-            .catch(() => reject(new Error("Error while stopping")));
-    });
-}
+            this.sdk.stop()
+                .then(() => resolve("SDK stopped successfully"))
+                .catch(() => reject(new Error("Error while stopping")));
+        });
+    }
 
 }
 
