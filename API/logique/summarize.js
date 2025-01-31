@@ -33,14 +33,20 @@ async function summarize(websiteContentInText, lang) {
         const websiteContentCleaned = await interactWithIa(
             generatePrompt(
                 model,
-                "Extract only the main content of the article. Remove all unrelated or supplementary content. Return only the cleaned main content without altering the core text or its meaning.",
+                "Extract only the main content of the article. Remove all unrelated or supplementary content. Return only the cleaned main content without altering the core text or its meaning. Converts text to markdown, highlighting important information. If there is a main image, add it..",
                 websiteContentInText
             )
         );
 
         const prompt = generatePrompt(
             model,
-            "Summarize the following text in 50 words or less in a concise, fluid style. Ignore titles, lists, or formatting. Provide only the plain summary.",
+            `Summarize the following text in 50 words or less in a concise, fluid style. 
+            - Format the summary in **Markdown**.  
+            - Use proper Markdown syntax:
+                - **Bold** key points.
+                - *Italicize* important concepts.
+                - Use \`code blocks\` where relevant.
+            - Maintain clarity and conciseness.`,
             websiteContentCleaned
         );
 

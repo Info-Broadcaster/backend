@@ -71,7 +71,10 @@ class Rainbow {
     async sendMessageToBubble(bubbleJid, message) {
         // await this.testConnection(); // TODO: Check try/catch block
         try {
-            const result = await this.sdk.im.sendMessageToBubbleJid(message, bubbleJid);
+            const result = await this.sdk.im.sendMessageToBubbleJid(message, bubbleJid, undefined, {
+                type: "text/markdown",
+                message: message,
+            });
             console.log("Message sent:", result);
         } catch (err) {
             console.error("Error sending message:", err);
@@ -109,14 +112,13 @@ class Rainbow {
                 reject(new Error("Error during SDK stop"));
             });
 
-            this.sdk
-                .stop()
+            this.sdk.stop();
             this.sdk
                 .stop()
                 .then(() => {
                     process.exit(0);
                 })
-                .catch(() => reject('Error while stopping'));
+                .catch(() => reject("Error while stopping"));
         });
     }
 }
