@@ -38,6 +38,11 @@ describe("Rainbow SDK Wrapper (Fully Mocked Connection)", () => {
         mockSdk = rainbowInstance.sdk;
     });
 
+    it("should create a new instance of Rainbow SDK (Mocked)", () => {
+        expect(rainbowInstance).toBeInstanceOf(Rainbow);
+        expect(mockSdk.start).not.toHaveBeenCalled();
+    });
+
     it("should start SDK successfully (Mocked)", async () => {
         await expect(rainbowInstance.testConnection()).resolves.toBe("SDK started successfully!");
         expect(mockSdk.start).toHaveBeenCalledTimes(1);
