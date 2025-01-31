@@ -124,7 +124,6 @@ async function summarize(websiteContentInText, lang) {
             hookphrase,
         };
     } catch (error) {
-        // console.error("Une erreur est survenue dans la génération de l'article:", error);
         throw error;
     }
 }

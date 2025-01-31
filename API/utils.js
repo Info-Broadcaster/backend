@@ -30,10 +30,6 @@ async function interactWithIa(prompt) {
             throw error;
         });
 
-    if (!result) {
-        throw new Error("Le service IA est actuellement indisponible. Veuillez contacter le GOAT bobylatruffe.");
-    }
-
     return result.data.message.content;
 }
 
