@@ -3,7 +3,7 @@ require("dotenv").config();
 
 class Rainbow {
     static instance = null;
-    
+
     constructor(email, password, appId, appSecret) {
         this.options = {
             rainbow: {
@@ -38,12 +38,13 @@ class Rainbow {
             console.log("Someone viewed...");
             console.log(event);
 
-            if (this.dict[event.id] > 0) {
+            if (!this.dict[event.id]) {
                 this.dict[event.id] = 1;
             } else {
                 this.dict[event.id] += 1;
             }
         });
+
     }
 
     async testConnection() {
@@ -111,7 +112,6 @@ class Rainbow {
                 .catch(() => reject(new Error("Error while stopping")));
         });
     }
-
 }
 
 module.exports = Rainbow;

@@ -23,6 +23,7 @@ describe("Rainbow SDK Wrapper", () => {
                         id: 'testMessageId'
                     }), 10);
                 }),
+                emit: jest.fn()
             },
             im: {
                 sendMessageToBubbleJid: jest.fn().mockResolvedValue("MessageSent"),
@@ -34,10 +35,16 @@ describe("Rainbow SDK Wrapper", () => {
             },
         }));
 
-        Rainbow.instance = null;
         rainbowInstance = new Rainbow("test@example.com", "password", "appId", "appSecret");
         mockSdk = rainbowInstance.sdk;
     });
+
+    it("should initialize Rainbow.instance if it's null", () => {
+        Rainbow.instance = null;
+        const rainbowInstance = new Rainbow("user@example.com", "password", "appId", "appSecret");
+        expect(Rainbow.instance).toBe(rainbowInstance);
+    });
+
 
     it("should create a new instance of Rainbow SDK", () => {
         expect(rainbowInstance).toBeInstanceOf(Rainbow);
@@ -172,4 +179,19 @@ describe("Rainbow SDK Wrapper", () => {
         errorCallback(new Error("Stop error"));
         await expect(stopPromise).rejects.toThrow("Error during SDK stop");
     });
+
+    it("should increment message receipt counter correctly", () => {
+        const event1 = { id: "msg1" };
+        rainbowInstance.dict["msg1"] = 0;
+
+        mockSdk.events.on.mock.calls.find(call => call[0] === "rainbow_onmessagereceiptreadreceived")[1](event1);
+        expect(rainbowInstance.dict["msg1"]).toBe(1);
+
+        const event2 = { id: "msg2" };
+        rainbowInstance.dict["msg2"] = 2;
+
+        mockSdk.events.on.mock.calls.find(call => call[0] === "rainbow_onmessagereceiptreadreceived")[1](event2);
+        expect(rainbowInstance.dict["msg2"]).toBe(3);
+    });
+
 });
