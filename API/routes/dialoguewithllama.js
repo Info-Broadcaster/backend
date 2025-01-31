@@ -24,13 +24,6 @@ router.post("/summarize", async (req, res) => {
             return res.status(400).send("LANG is required");
         }
 
-        // vérifier lang qu'il soit bien FR, EN, IT ...
-
-        // const isValideUrl = isValidUrl(req.body.url);
-        // if (!isValideUrl) {
-        //     return res.status(400).json("Invalid URL or URL is not reachable");
-        // }
-
         const extractedDataFromUrl = await extractDataFromUrl(req.body.url, req.body.xpath);
 
         const dataAfterIA = await summarize(extractedDataFromUrl, req.body.lang);
@@ -53,7 +46,7 @@ router.post("/summarize", async (req, res) => {
 });
 
 router.post("/summarize/text", async (req, res) => {
-    
+
     const dataAfterIA = await summarize(req.body.text, req.body.lang);
 
     if (dataAfterIA) {

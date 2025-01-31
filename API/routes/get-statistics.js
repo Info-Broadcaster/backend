@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getTrackerDataFromJson, getTrackerDataFromLinkly } = require('../logique/link-tracker');
+const { getTrackerDataFromLinkly } = require('../logique/link-tracker');
 
 router.get('/', async (req, res) => {
     try {
