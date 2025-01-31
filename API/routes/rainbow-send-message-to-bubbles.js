@@ -20,13 +20,11 @@ router.post('/', async (req, res) => {
 
         for (const bubble of bubbles) {
             await user.rainbowInstance.sendMessageToBubble(bubble, formatedMessage);
-            await user.rainbowInstance.sendMessageToBubble(bubble, formatedMessage);
         }
         return res.status(200).json({ success: true, message: 'Message sent successfully!.' });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     } finally {
-        // rainbowSdk.stop(); // Clean up the SDK session
         // rainbowSdk.stop(); // Clean up the SDK session
     }
 });
