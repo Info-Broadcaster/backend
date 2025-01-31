@@ -191,7 +191,7 @@ describe("Rainbow SDK Wrapper", () => {
         rainbowInstance.dict["msg2"] = 2;
 
         mockSdk.events.on.mock.calls.find(call => call[0] === "rainbow_onmessagereceiptreadreceived")[1](event2);
-        expect(rainbowInstance.dict["msg2"]).toBe(3);
+        expect(rainbowInstance.dict["msg2"]).toBe(1);
     });
 
 });

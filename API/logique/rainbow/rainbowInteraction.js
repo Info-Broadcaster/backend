@@ -38,7 +38,7 @@ class Rainbow {
             console.log("Someone viewed...");
             console.log(event);
 
-            if (!this.dict[event.id]) {
+            if (this.dict[event.id] > 0) {
                 this.dict[event.id] = 1;
             } else {
                 this.dict[event.id] += 1;
