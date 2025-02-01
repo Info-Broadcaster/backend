@@ -2,11 +2,11 @@
   "name": "broadcast_back_end",
   "version": "1.0.0",
   "description": "Une super description à mettre ici pour gagner des milliards",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "jest --colors",
-    "start": "node ./index.js",
-    "local": "nodemon ./index.js"
+    "test": "jest --colors --verbose --coverage",
+    "start": "node ./server.js",
+    "local": "nodemon ./server.js"
   },
   "author": "Fatih BOZLAK et Al.",
   "license": "ISC",

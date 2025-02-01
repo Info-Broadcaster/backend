@@ -5,8 +5,6 @@ const pass = "D6N{Uz[B5[])";
 const appid = "255f2b9080fd11efa6661b0bb9c90370";
 const appsecret = "Tiw4OORLjL0WTjYbmym6Z2o9p0AuPakNGQUM6bAnRyyJQ7muBz27wmBcxVxWuTix";
 
-//const rainbowSdk = new Rainbow(username, pass, appid, appsecret);
-
 var dict = new Object();
 
 if (!dict["AA"] > 0) {

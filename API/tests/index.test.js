@@ -1,6 +1,8 @@
 const request = require('supertest');
 const app = require('../index');
 
+require('dotenv').config({ override: true });
+
 describe('Server Startup', () => {
     let server;
 
@@ -35,6 +37,45 @@ describe('Server Startup', () => {
         it('should not automatically start the server when required as a module', () => {
             expect(app).toBeDefined();
             expect(app.listen).toBeDefined();
+        });
+    });
+
+
+    describe('CORS Origin', () => {
+        let originalEnv;
+        let app;
+
+        beforeAll(() => {
+            originalEnv = { ...process.env };
+        });
+
+        afterAll(() => {
+            process.env = originalEnv;
+        });
+
+        beforeEach(() => {
+            jest.resetModules();
+        });
+
+        it('should use default origin when FRONTEND_URL is not set', async () => {
+            delete process.env.FRONTEND_URL;
+            app = require('../index');
+            const res = await request(app).get('/api/hello');
+            expect(res.headers['access-control-allow-origin']).toBe('http://localhost:5173');
+        });
+
+        it('should use FRONTEND_URL when it is set', async () => {
+            process.env.FRONTEND_URL = 'https://myapp.example.com';
+            app = require('../index');
+            const res = await request(app).get('/api/hello');
+            expect(res.headers['access-control-allow-origin']).toBe('https://myapp.example.com');
+        });
+
+        it('should handle empty FRONTEND_URL value', async () => {
+            process.env.FRONTEND_URL = '';
+            app = require('../index');
+            const res = await request(app).get('/api/hello');
+            expect(res.headers['access-control-allow-origin']).toBe('http://localhost:5173');
         });
     });
 });

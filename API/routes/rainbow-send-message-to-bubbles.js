@@ -1,13 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const Rainbow = require("../logique/rainbow/rainbowInteraction");
 const { getLinkTracker } = require("../logique/link-tracker");
 
 router.post("/", async (req, res) => {
     const user = req.user;
-    const { bubbles, message, title, link } = req.body; // Extract the bubbleJid and message from the request body.
+    const { bubbles, message, title, link } = req.body;
 
-    // Creating a tracked link from the provided one
     const trackedLink = await getLinkTracker(link);
 
     if (
@@ -32,8 +30,6 @@ router.post("/", async (req, res) => {
         return res.status(200).json({ success: true, message: "Message sent successfully!." });
     } catch (error) {
         return res.status(500).json({ error: error.message });
-    } finally {
-        // rainbowSdk.stop(); // Clean up the SDK session
     }
 });
 
