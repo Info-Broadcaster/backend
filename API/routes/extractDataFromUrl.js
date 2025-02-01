@@ -12,27 +12,26 @@ router.post('/', async (req, res) => {
         return res.status(400).send('LANG is required');
     }
 
-    // if (!req.body.xpath) {
-    //     return res.status(400).send("XPATH is required");
-    // }
+    try {
+        const extractedDataFromUrl = await extractDataFromUrl(
+            req.body.url,
+            req.body.xpath
+        );
 
-    const extractedDataFromUrl = await extractDataFromUrl(
-        req.body.url,
-        req.body.xpath
-    );
-    const dataAfterIA = await summarize(extractedDataFromUrl, req.body.lang);
+        const dataAfterIA = await summarize(extractedDataFromUrl, req.body.lang);
 
-    if (dataAfterIA) {
         return res.status(200).json({
             data: {
                 summarized: dataAfterIA.summarized,
                 title: dataAfterIA.title,
                 themes: dataAfterIA.themes,
+                suggestThemeFromTopicsInBubbles: dataAfterIA.suggestThemeFromTopicsInBubbles,
             },
         });
-    } else {
+    } catch (error) {
         return res.status(500).json({ error: "Failed to extract data.", details: error.message });
     }
 });
 
 module.exports = router;
+

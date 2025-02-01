@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 require('dotenv').config();
-const PORT = process.env.PORT || 3000;
 
 const cookieParser = require('cookie-parser');
 const verifyToken = require('./logique/middleware');
@@ -26,6 +25,9 @@ app.use('/api/hello', helloRoute);
 const login = require("./routes/login");
 app.use("/api/login", login);
 
+const getStatistics = require("./routes/get-statistics");
+app.use("/api/getStatistics", getStatistics);
+
 const dialoguewithllama = require('./routes/dialoguewithllama');
 app.use('/api/dialoguewithllama', dialoguewithllama);
 
@@ -37,11 +39,5 @@ app.use('/api/rainbowGetBubbles', verifyToken, rainbowGetBubbles);
 
 const rainbowSendMessageToBubbles = require('./routes/rainbow-send-message-to-bubbles');
 app.use('/api/rainbowSendMessageToBubbles', verifyToken, rainbowSendMessageToBubbles);
-
-if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`Server listen on port ${PORT}`);
-    });
-}
 
 module.exports = app;

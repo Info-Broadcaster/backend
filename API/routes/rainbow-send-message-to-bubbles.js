@@ -1,28 +1,35 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Rainbow = require('../logique/rainbow/rainbowInteraction');
+const { getLinkTracker } = require("../logique/link-tracker");
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
     const user = req.user;
-    const { bubbles, message, title, link } = req.body; // Extract the bubbleJid and message from the request body.
+    const { bubbles, message, title, link } = req.body;
 
-    if (bubbles == null || bubbles?.length === 0 || !message || message === '' || !title || title === '' || !link || link === '') {
-        return res.status(400).json({ error: 'bubbles, message, title and link are required.' });
+    const trackedLink = await getLinkTracker(link);
+
+    if (
+        bubbles == null ||
+        bubbles?.length === 0 ||
+        !message ||
+        message === "" ||
+        !title ||
+        title === "" ||
+        !trackedLink ||
+        trackedLink === ""
+    ) {
+        return res.status(400).json({ error: "bubbles, message, title and link are required." });
     }
 
-    const rainbowSdk = new Rainbow(user.username, user.password, process.env.APP_ID, process.env.APP_SECRET);
-
     try {
-        const formatedMessage = title + '\n\n' + message + '\n\n' + link;
+        const formatedMessage = `##${title} \n\n\n${message}\n\n[Accéder à l'article original](${trackedLink})`;
 
         for (const bubble of bubbles) {
-            await rainbowSdk.sendMessageToBubble(bubble, formatedMessage);
+            await user.rainbowInstance.sendMessageToBubble(bubble, formatedMessage);
         }
-        return res.status(200).json({ success: true, message: 'Message sent successfully!.' });
+        return res.status(200).json({ success: true, message: "Message sent successfully!." });
     } catch (error) {
         return res.status(500).json({ error: error.message });
-    } finally {
-        rainbowSdk.stop(); // Clean up the SDK session
     }
 });
 

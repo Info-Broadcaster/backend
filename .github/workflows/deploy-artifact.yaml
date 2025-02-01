@@ -24,5 +24,5 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ghcr.io/infobroadcaster/backend:${{ github.sha }} ./API
-          docker push ghcr.io/infobroadcaster/backend:${{ github.sha }}
+          docker build -t ghcr.io/info-broadcaster/backend:${{ github.sha }} ./API
+          docker push ghcr.io/info-broadcaster/backend:${{ github.sha }}

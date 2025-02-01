@@ -1,27 +1,40 @@
 const request = require('supertest');
 const express = require('express');
 const assert = require('assert');
-const Rainbow = require('../logique/rainbow/rainbowInteraction');
-const router = require('../routes/rainbow-get-bubbles');
+const Rainbow = require('../../logique/rainbow/rainbowInteraction');
+const router = require('../../routes/rainbow-get-bubbles');
 
-jest.mock('../logique/rainbow/rainbowInteraction');
+jest.mock('../../logique/rainbow/rainbowInteraction');
 
 const app = express();
 app.use(express.json());
+
+// Create a mock Rainbow instance
+const mockRainbowInstance = {
+    getAllBubbles: jest.fn()
+};
+
+// Update middleware to include rainbowInstance
 app.use((req, res, next) => {
-    req.user = { username: 'testuser', password: 'testpass' };
+    req.user = {
+        username: 'testuser',
+        password: 'testpass',
+        rainbowInstance: mockRainbowInstance
+    };
     next();
 });
+
 app.use('/api/rainbowGetBubbles', router);
 
 describe('Rainbow Get Bubbles API', () => {
     beforeEach(() => {
-        Rainbow.mockClear();
+        jest.clearAllMocks();
+        mockRainbowInstance.getAllBubbles.mockReset();
     });
 
     it('should return bubbles on success', async () => {
         const mockBubbles = [{ id: 1, name: 'Bubble1' }, { id: 2, name: 'Bubble2' }];
-        Rainbow.prototype.getAllBubbles.mockResolvedValue(mockBubbles);
+        mockRainbowInstance.getAllBubbles.mockResolvedValue(mockBubbles);
 
         const response = await request(app).get('/api/rainbowGetBubbles');
 
@@ -31,7 +44,7 @@ describe('Rainbow Get Bubbles API', () => {
 
     it('should return an error on failure', async () => {
         const mockError = new Error('Failed to get bubbles');
-        Rainbow.prototype.getAllBubbles.mockRejectedValue(mockError);
+        mockRainbowInstance.getAllBubbles.mockRejectedValue(mockError);
 
         const response = await request(app).get('/api/rainbowGetBubbles');
 

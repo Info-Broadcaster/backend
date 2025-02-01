@@ -46,5 +46,5 @@ COPY . .
 
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
 
-CMD ["node", "index.js"]
+CMD ["npm", "start"]
 
