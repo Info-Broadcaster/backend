@@ -1,53 +1,80 @@
-const request = require('supertest');
-const express = require('express');
-const assert = require('assert');
-const router = require('../../routes/rainbow-get-bubbles');
+const request = require("supertest");
+const express = require("express");
+const router = require("../../routes/rainbow-send-message-to-bubbles");
+const { getLinkTracker } = require("../../logique/link-tracker");
 
-jest.mock('../../logique/rainbow/rainbowInteraction');
+jest.mock("../../logique/rainbow/rainbowInteraction");
+jest.mock("../../logique/link-tracker");
 
 const app = express();
 app.use(express.json());
 
-// Create a mock Rainbow instance
-const mockRainbowInstance = {
-    getAllBubbles: jest.fn()
+const user = {
+    rainbowInstance: {
+        sendMessageToBubble: jest.fn()
+    }
 };
 
-// Update middleware to include rainbowInstance
 app.use((req, res, next) => {
-    req.user = { 
-        username: 'testuser', 
-        password: 'testpass',
-        rainbowInstance: mockRainbowInstance
-    };
+    req.user = user;
     next();
 });
 
-app.use('/api/rainbowGetBubbles', router);
+app.use("/send-message", router);
 
-describe('Rainbow Get Bubbles API', () => {
+describe("POST /send-message", () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        mockRainbowInstance.getAllBubbles.mockReset();
+        getLinkTracker.mockReset();
+        user.rainbowInstance.sendMessageToBubble.mockReset();
     });
 
-    it('should return bubbles on success', async () => {
-        const mockBubbles = [{ id: 1, name: 'Bubble1' }, { id: 2, name: 'Bubble2' }];
-        mockRainbowInstance.getAllBubbles.mockResolvedValue(mockBubbles);
-
-        const response = await request(app).get('/api/rainbowGetBubbles');
-
-        assert.strictEqual(response.status, 200);
-        assert.deepStrictEqual(response.body, mockBubbles);
+    it("should return 400 if bubbles, message, title or link are missing", async () => {
+        const response = await request(app).post("/send-message").send({});
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("bubbles, message, title and link are required.");
     });
 
-    it('should return an error on failure', async () => {
-        const mockError = new Error('Failed to get bubbles');
-        mockRainbowInstance.getAllBubbles.mockRejectedValue(mockError);
+    it("should return 400 if bubbles array is empty", async () => {
+        getLinkTracker.mockResolvedValue("http://tracked-link.com");
+        const response = await request(app).post("/send-message").send({
+            bubbles: [],
+            message: "Test message",
+            title: "Test title",
+            link: "http://example.com"
+        });
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("bubbles, message, title and link are required.");
+    });
 
-        const response = await request(app).get('/api/rainbowGetBubbles');
+    it("should return 500 if there is an error sending the message", async () => {
+        getLinkTracker.mockResolvedValue("http://tracked-link.com");
+        user.rainbowInstance.sendMessageToBubble.mockRejectedValue(new Error("Send message error"));
 
-        assert.strictEqual(response.status, 400);
-        assert.deepStrictEqual(response.body, { error: mockError.message });
+        const response = await request(app).post("/send-message").send({
+            bubbles: ["bubble1"],
+            message: "Test message",
+            title: "Test title",
+            link: "http://example.com"
+        });
+
+        expect(response.status).toBe(500);
+        expect(response.body.error).toBe("Send message error");
+    });
+
+    it("should return 200 if the message is sent successfully", async () => {
+        getLinkTracker.mockResolvedValue("http://tracked-link.com");
+        user.rainbowInstance.sendMessageToBubble.mockResolvedValue();
+
+        const response = await request(app).post("/send-message").send({
+            bubbles: ["bubble1"],
+            message: "Test message",
+            title: "Test title",
+            link: "http://example.com"
+        });
+
+        expect(response.status).toBe(200);
+        expect(response.body.success).toBe(true);
+        expect(response.body.message).toBe("Message sent successfully!.");
     });
 });
