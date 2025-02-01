@@ -1,16 +1,19 @@
-name: Deploy
+name: Deploy docker image
 
 on:
-  workflow_run:
-    workflows: 
-      - Test Validation
-    types:
-      - completed
+  push:
+    branches:
+      - deploy
+  pull_request:
+    branches:
+      - deploy
 
 jobs:
   deploy:
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
