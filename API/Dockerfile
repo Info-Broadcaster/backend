@@ -1,12 +1,20 @@
-FROM debian:bookworm-slim
-
+FROM debian:bookworm-slim AS base
 ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y \
-    software-properties-common apt-transport-https ca-certificates \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gnupg \
     ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+FROM base AS chrome
+RUN curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | \
+    gpg --dearmor | tee /usr/share/keyrings/google-chrome.gpg > /dev/null && \
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | \
+    tee /etc/apt/sources.list.d/google-chrome.list
+
+FROM chrome AS final
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    google-chrome-stable \
     fonts-liberation \
     libappindicator3-1 \
     xdg-utils \
@@ -23,28 +31,21 @@ RUN apt-get update && apt-get install -y \
     libgdk-pixbuf2.0-0 \
     libxshmfence1 \
     libgles2 \
-    --no-install-recommends
-
-RUN curl -fSsL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | tee /usr/share/keyrings/google-chrome.gpg >> /dev/null
-
-RUN echo deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main | tee /etc/apt/sources.list.d/google-chrome.list
-
-RUN apt update && apt install google-chrome-stable -y
-
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY package.* .
-
-RUN npm install
+COPY package*.json ./
+RUN npm ci --only=production
 
 COPY . .
 
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
 
-CMD ["npm", "start"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/api/hello || exit 1
 
+CMD ["npm", "start"]
