@@ -4,7 +4,7 @@
   "description": "Une super description à mettre ici pour gagner des milliards",
   "main": "server.js",
   "scripts": {
-    "test": "jest --colors --verbose --coverage",
+    "test": "jest --colors --coverage",
     "start": "node ./server.js",
     "local": "nodemon ./server.js"
   },
