@@ -1,10 +1,10 @@
 const request = require('supertest');
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const Rainbow = require('../logique/rainbow/rainbowInteraction');
-const loginRouter = require('../routes/login');
+const Rainbow = require('../../logique/rainbow/rainbowInteraction');
+const loginRouter = require('../../routes/login');
 
-jest.mock('../logique/rainbow/rainbowInteraction');
+jest.mock('../../logique/rainbow/rainbowInteraction');
 
 const app = express();
 app.use(express.json());

@@ -1,10 +1,10 @@
 const request = require('supertest');
 const express = require('express');
 const assert = require('assert');
-const Rainbow = require('../logique/rainbow/rainbowInteraction');
-const router = require('../routes/rainbow-get-bubbles');
+const Rainbow = require('../../logique/rainbow/rainbowInteraction');
+const router = require('../../routes/rainbow-get-bubbles');
 
-jest.mock('../logique/rainbow/rainbowInteraction');
+jest.mock('../../logique/rainbow/rainbowInteraction');
 
 const app = express();
 app.use(express.json());

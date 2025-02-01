@@ -15,26 +15,19 @@ Retour:
 Retourne un JSON avec l'article résumé dans la ppt data
  */
 router.post("/summarize", async (req, res) => {
-    if (!req.body.url) {
-        return res.status(400).send("URL is required");
-    }
+    try {
+        if (!req.body.url) {
+            return res.status(400).send("URL is required");
+        }
 
-    if (!req.body.lang) {
-        return res.status(400).send("LANG is required");
-    }
+        if (!req.body.lang) {
+            return res.status(400).send("LANG is required");
+        }
 
-    // vérifier lang qu'il soit bien FR, EN, IT ...
+        const extractedDataFromUrl = await extractDataFromUrl(req.body.url, req.body.xpath);
 
-    // const isValideUrl = isValidUrl(req.body.url);
-    // if (!isValideUrl) {
-    //     return res.status(400).json("Invalid URL or URL is not reachable");
-    // }
+        const dataAfterIA = await summarize(extractedDataFromUrl, req.body.lang);
 
-    const extractedDataFromUrl = await extractDataFromUrl(req.body.url, req.body.xpath);
-
-    const dataAfterIA = await summarize(extractedDataFromUrl, req.body.lang);
-
-    if (dataAfterIA) {
         return res.status(200).json({
             data: {
                 summarized: dataAfterIA.summarized,
@@ -47,18 +40,12 @@ router.post("/summarize", async (req, res) => {
                 hookphrase: dataAfterIA.hookphrase,
             },
         });
-    } else {
-        return res.status(500).send("Error");
+    } catch (error) {
+        return res.status(500).send(error.message);
     }
 });
 
 router.post("/summarize/text", async (req, res) => {
-    // vérifier lang qu'il soit bien FR, EN, IT ...
-
-    // const isValideUrl = isValidUrl(req.body.url);
-    // if (!isValideUrl) {
-    //     return res.status(400).json("Invalid URL or URL is not reachable");
-    // }
 
     const dataAfterIA = await summarize(req.body.text, req.body.lang);
 
